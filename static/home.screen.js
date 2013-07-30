@@ -4,7 +4,29 @@ CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marion
 		template: '#template-node',
 		className: 'node',
 		onShow: function() {
-			this.$el.css('background-color', this.model.get('color'));
+			var self = this;
+			this.$el.addClass( this.model.get('color') );
+			
+			if( this.model.get('type') == 'income' || this.model.get('type') == 'account' )  {
+				this.$el.draggable({
+					stack: '.node',
+					revert: 'invalid',
+					helper: function() {
+						return $(this).clone().addClass('helper').data('source', self.model.get('id') );
+					},
+				});
+			}
+			
+			if( this.model.get('type') != 'income' )  {
+				this.$el.droppable({
+					accept: '.node',
+					hoverClass: 'drop-hover',
+					drop: function(event, ui) {
+						var source = ui.helper.data('source');
+						console.log( source + ' -> ' + self.model.get('id') );
+					}
+				});	
+			}
 		}
 	});
 	
