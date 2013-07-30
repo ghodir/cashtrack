@@ -1,20 +1,27 @@
+var CashTrack = new Marionette.Application();
+
+
+CashTrack.addRegions({
+	content: '#content',
+});
+
+CashTrack.navigate = function(route, options) {
+	Backbone.history.navigate(route, options);
+}
+
+CashTrack.on('initialize:after', function() {
+	if( !Backbone.history )
+		return;
+	
+	Backbone.history.start();
+	/*
+	if( Backbone.history.fragment === "" )
+		CashTrack.trigger('home:show');
+	*/
+});
+
 (function() {
-	
-	var CashTrack = new Marionette.Application();
-	
-	CashTrack.addRegions({
-	
-	});
-	
-	CashTrack.on('initialize:after', function() {
-		if( !Backbone.history )
-			return;
-		
-		Backbone.history.start();
-		if( Backbone.history.fragment === "" )
-			CashTrack.trigger('home:show');
-	});
-	
+	/*
 	var Node = Backbone.Model.extend({});
 	var Nodes = Backbone.Collection.extend({
 		url: '/api/users/1/nodes',
@@ -101,8 +108,9 @@
 	$(function() {
 		$('#content').html( view.render() );
 	});
+	*/
 })();
-
+/*
 $(function() {
 	$('.category.source').draggable({
 		stack: '.category',
@@ -151,3 +159,4 @@ $(function() {
 		console.log('click');
 	});
 });
+*/

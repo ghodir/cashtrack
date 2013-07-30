@@ -30,7 +30,7 @@ CashTrack.module('Entities', function(Entities, CashTrack, Backbone, Marionette,
 
 	Entities.SubGroupCollection = Entities.SubCollection.extend({
 		constructor: function(collection, name, value, options) {
-			SubCollection.call(this, collection, function(model) {
+			Entities.SubCollection.call(this, collection, function(model) {
 				return model.get(name) === value;
 			}, options);
 		}
@@ -38,8 +38,8 @@ CashTrack.module('Entities', function(Entities, CashTrack, Backbone, Marionette,
 
 	Entities.SubTypeCollection = Entities.SubCollection.extend({
 		constructor: function(collection, value, options) {
-			SubCollection.call(this, collection, function(model) {
-				return model.get('type') === 'value';
+			Entities.SubCollection.call(this, collection, function(model) {
+				return model.get('type') === value;
 			}, options);
 		}
 	});

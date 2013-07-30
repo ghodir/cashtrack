@@ -10,7 +10,7 @@ body {
 .section h2 {
 	//border-bottom: 1px solid #27ae60;
 	font: 21pt 'Segoe UI', sans-serif;
-	margin: 0;
+	margin: .2em 0;
 	color: #fff;
 }
 
@@ -22,7 +22,7 @@ body {
 	content: ' ';
 }
 
-.category {
+.node {
 	display: block;
 	width: 96px;
 	height: 96px;
@@ -44,16 +44,16 @@ body {
 	font: 11pt 'Segoe UI', sans-serif;
 }
 
-.category.hover {
+.node.hover {
 	//opacity: 0.9;
 }
 
-.category .label {
+.node .label {
 	margin: 0;
 	line-height: 1em;
 }
 
-.category .icon {
+.node .icon {
 	display: block;
 	font-size: 3em;
 	margin: 4px 0;
@@ -70,5 +70,5 @@ body {
 	font-size: 48px;
 }
 
-.category .value {
+.node .value {
 }

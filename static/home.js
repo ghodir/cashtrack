@@ -7,7 +7,18 @@ CashTrack.module('Home', function(Home, CashTrack, Backbone, Marionette, $, _) {
 	
 	var API = {
 		showHomeScreen: function() {
-			
+			Home.Screen.Controller.show();
 		}
 	}
+	
+	CashTrack.on('home:show', function() {
+		CashTrack.navigate('');
+		API.showHomeScreen();
+	});
+	
+	CashTrack.addInitializer(function() {
+		new Home.Router({
+			controller: API,
+		});
+	});
 });
