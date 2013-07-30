@@ -1,39 +1,18 @@
 (function() {
-	var SubCollection = Backbone.Collection.extend({
-		constructor: function( collection, cb, options ) {
-			this.collection = collection;
-			cb && (this.cb = cb);
-			
-			this.listenTo( this.collection, 'add', this._onAdd);
-			this.listenTo( this.collection, 'change', this._onChange);
-			this.listenTo( this.collection, 'remove', this._onRemove);
-			this.listenTo( this.collection, 'reset', this._onReset);
 	
-			var models = this.collection.filter(cb);
-			Backbone.Collection.call(this, models, options);
-		},
-		_onChange: function(model) {
-			if( !this.cb(model) )
-				this.remove( model );
-		},
-		_onAdd: function(model) {
-			if( this.cb(model) )
-				this.add( model );
-		},
-		_onRemove: function(model) {
-			this.remove(model);
-		},
-		_onReset: function() {
-			this.reset( this.collection.filter(this.cb) );
-		}
+	var CashTrack = new Marionette.Application();
+	
+	CashTrack.addRegions({
+	
 	});
 	
-	var SubGroupCollection = SubCollection.extend({
-		constructor: function(collection, name, value, options) {
-			SubCollection.call(this, collection, function(model) {
-				return model.get(name) === value;
-			}, options);
-		}
+	CashTrack.on('initialize:after', function() {
+		if( !Backbone.history )
+			return;
+		
+		Backbone.history.start();
+		if( Backbone.history.fragment === "" )
+			CashTrack.trigger('home:show');
 	});
 	
 	var Node = Backbone.Model.extend({});
@@ -42,17 +21,41 @@
 		model: Node
 	});
 	
+	var NodeView = Backbone.View.extend({
+		className: 'node',
+		initialize: function( options ) {
+			this.node = options.node;
+		},
+		render: function() {
+			this.template || ( this.template = _.template( $('#template-node').html() ));
+			
+			this.$el.html( this.template({node: this.node.toJSON()}) );
+			return this.$el;
+		}
+	});
+	
 	var SectionView = Backbone.View.extend({
 		className: 'section',
 		initialize: function(options) {
 			this.name = options.name;
-			this.elements = options.elements;
+			this.nodes = [];
+			
+			this.listenTo( this.nodes, 'add', this.addChildView );
+			this.listenTo( this.nodes, 'remove', this.removeChildView );
+			this.listenTo( this.nodes, 'reset', this.render );
+			
+			options.nodes.each(function(node){
+				this.nodes.push( new NodeView({node: options.nodes[node]}) );
+			});
 		},
 		render: function() {
 			this.template || (this.template = _.template( $('#template-section').html() )),
 			
-			console.log( 'render section' );
-			this.$el.html( this.template({name: this.name, elements: this.elements.toJSON() }) );
+			this.$el.html( this.template({name: this.name}) );
+			var $nodes = this.$('.nodes');
+			for( node in this.nodes ) {
+				$nodes.append( this.nodes[node].render() );
+			}
 			return this.$el;
 		}
 	});
@@ -62,14 +65,13 @@
 			this.sections = {};
 			_.each(['income', 'account', 'category', 'goal'], function(name) {
 				var c = new SubGroupCollection(options.collection, 'type', name);
-				this.sections[name] = new SectionView({name: name, elements: c});
+				this.sections[name] = new SectionView({name: name, nodes: c});
 			}, this);
 			
 			this.listenTo( options.collection, 'reset', this.render);
 			this.listenTo( options.collection, 'change', this.render);
 		},
 		render: function() {
-			console.log( 'render home screen' );
 			this.$el.html('');
 			for( name in this.sections ) {
 				this.$el.append( this.sections[name].render() );
@@ -90,8 +92,7 @@
 		});
 		
 	nodes.on('reset', function() {
-		console.log('reset', nodes.toJSON());
-		
+		console.log( nodes.toJSON() );
 	});
 	
 	var view = new HomeScreen({collection: nodes});

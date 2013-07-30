@@ -17,17 +17,21 @@
 		<div id="main"></div>
 		<script type="text/template" id="template-section">
 			<h2><%= name %></h2>
-			<% _.each(elements, function(category) { %>
-				<div class="category source" title="<%= category.name %>" style="background-color: <%= category.color %>">
-					<span class="label"><%= category.name %></span>
-					<span aria-hidden="true" class="icon icon-<%= category.icon %>"></span>
-					<span class="value">
-						<%= category.actual %><% if( category.budget ) { %>/<%= category.budget %><% } %> €
-					</span>
-				</div>
-			<% }) %>
+			<div class="nodes"></div>
 		</script>
-		<script type="application/javascript" src="main.js"></script>
+		<script type="text/template" id="template-node">
+			<div class="node" title="<%= name %>" style="background-color: <%= color %>">
+				<span class="label"><%= name %></span>
+				<span aria-hidden="true" class="icon icon-<%= icon %>"></span>
+				<span class="value">
+					<%= actual %><% if( budget ) { %>/<%= budget %><% } %> €
+				</span>
+			</div>
+		</script>
+		<script type="application/javascript" src="app.js"></script>
+		<script type="application/javascript" src="entities.subcollection.js"></script>
+		<script type="application/javascript" src="home.js"></script>
+		<script type="application/javascript" src="home.screen.js"></script>
 		<div id="header">
 		
 		</div>
