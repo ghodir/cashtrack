@@ -1,8 +1,30 @@
 var CashTrack = new Marionette.Application();
 
+Marionette.Region.Dialog = Marionette.Region.extend({
+	onShow: function( view ) {
+		this.listenTo(view, 'dialog:close', this.closeDialog);
+		
+		var self = this;
+		this.$el.dialog({
+			modal: true,
+			title: view.title,
+			with: 'auto',
+			close: function(e, ui) {
+				self.closeDialog();
+			}
+		});
+	},
+	closeDialog: function() {
+		this.stopListening();
+		this.close();
+		this.$el.dialog('destroy');
+	}
+});
+
 
 CashTrack.addRegions({
-	content: '#content',
+	content: '#content-region',
+	dialog: Marionette.Region.Dialog.extend({el: '#dialog-region'}),
 });
 
 CashTrack.navigate = function(route, options) {

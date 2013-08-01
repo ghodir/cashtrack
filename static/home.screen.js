@@ -1,5 +1,20 @@
 CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marionette, $, _) {
 	
+	HomeScreen.TransactionView = Marionette.ItemView.extend({
+		template: '#template-transaction',
+		
+		events: {
+		
+		}
+	});
+	
+	HomeScreen.TransactionAddView = HomeScreen.TransactionView.extend({
+		initialize: function(options) {
+			this.model = new Backbone.Model({source: options.source, destination: options.destination});
+			this.title = this.model.get('source').get('name') + ' > ' + this.model.get('destination').get('name');
+		}
+	});
+	
 	HomeScreen.NodeView = Marionette.ItemView.extend({
 		template: '#template-node',
 		className: 'node',
@@ -12,7 +27,7 @@ CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marion
 					stack: '.node',
 					revert: 'invalid',
 					helper: function() {
-						return $(this).clone().addClass('helper').data('source', self.model.get('id') );
+						return $(this).clone().addClass('helper').data('source', self.model );
 					},
 				});
 			}
@@ -23,7 +38,11 @@ CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marion
 					hoverClass: 'drop-hover',
 					drop: function(event, ui) {
 						var source = ui.helper.data('source');
-						console.log( source + ' -> ' + self.model.get('id') );
+						
+						CashTrack.dialog.show( new HomeScreen.TransactionAddView({
+							source: source,
+							destination: self.model,
+						}));
 					}
 				});	
 			}
