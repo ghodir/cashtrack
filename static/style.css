@@ -117,7 +117,7 @@
 .modal .body,
 .modal .title,
 .modal .buttons {
-	width: 960px;
+	width: 540px;
 	margin: 0 auto;
 }
 
@@ -161,6 +161,7 @@
 	margin-bottom: 2em;
 }
 
+.button,
 .modal .buttons button {
 	float: right;
 	font: 11pt 'Segoe UI', sans-serif;
@@ -175,11 +176,13 @@
 	cursor: pointer;
 }
 
+.button:hover,
 .modal .buttons button:hover {
 	border-color: #fff;
 	color: rgba(255, 255, 255, 1);
 }
 
+.button:active,
 .modal .buttons button:active {
 	color: rgba(255, 255, 255, .6);
 }
