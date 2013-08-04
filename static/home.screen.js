@@ -1,17 +1,48 @@
 CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marionette, $, _) {
 	
-	HomeScreen.TransactionView = Marionette.ItemView.extend({
+	HomeScreen.TransactionAddView = Marionette.ModalView.extend({
 		template: '#template-transaction',
-		
-		events: {
-		
-		}
-	});
-	
-	HomeScreen.TransactionAddView = HomeScreen.TransactionView.extend({
-		initialize: function(options) {
+		ui: {
+			value: '.body .value',
+		},
+		initialize: function( options ) {
 			this.model = new Backbone.Model({source: options.source, destination: options.destination});
 			this.title = this.model.get('source').get('name') + ' > ' + this.model.get('destination').get('name');
+			
+			this.$el.on('keypress', $.proxy(this._onKeyPress, this));
+			this.value = 0.00;
+		},
+		_onKeyPress: function( e ) {
+			if( [
+				'0', '1', '2', '3',
+				'4', '5', '6', '7',
+				'8', '9', ',', '.',
+			].indexOf( String.fromCharCode( e.which ) ) !== -1 ) {
+				return; 
+			} else if( [
+				'+', '*', '-',
+			].indexOf( String.fromCharCode( e.which ) ) !== -1 ) {
+				var tmp = parseFloat( this.ui.value.val() );
+				if( this.operator ) {
+					switch( this.operator ) {
+						case '+': this.value += tmp; break;
+						case '*': this.value *= tmp; break;
+						case '-': this.value -= tmp; break;
+						case undefined: this.value = tmp; break;
+						default:
+							throw new Error('Invalid operator');
+					}
+				} else {
+					this.value = tmp;
+				}
+				
+				this.operator = String.fromCharCode( e.which );
+				this.ui.value.val( this.value );
+				e.preventDefault();
+			} else if( String.fromCharCode( e.which ) == '=' ) {
+				this.ui.value.val( '' + this.value );
+				e.preventDefault();
+			}
 		}
 	});
 	

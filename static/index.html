@@ -42,7 +42,106 @@
 			</span>
 		</script>
 		<script type="text/template" id="template-transaction">
-		
+			<div class="title">
+				<h3 class="value">Gehalt > Lebensmittel</h3>
+				<button class="close">&times;</button>
+			</div>
+			<div class="body">
+				<style type="text/css">
+					.calculator {
+					
+					}
+					
+					.left, .right {
+						float: left;
+					}
+					
+					.left {
+						margin-right: 8px;
+					}
+					
+					.right {
+						margin-left: 8px;
+						width: 413px;
+					}
+					
+					.right .tags,
+					.right .notes {
+						width: 100%;
+					}
+					
+					.right .notes {
+						height: 136px;
+					}
+					
+					
+					.calculator .tags,
+					.calculator .value {
+						margin: 0 0 6px 0;
+						height: 32px;
+						font-size: 32px;
+					}
+					
+					.calculator .value {
+						width: 264px;
+						text-align: right;
+						padding: 0 6px;
+					}
+					
+					.calculator .button {
+						width: 64px;
+						height: 32px;
+						margin: 0 5px 5px 2px;
+						float: left;
+						
+						background-color: #34495e;
+						border-color: #34495e;
+						outline-color: #34495e;
+					}
+					
+					.calculator .button:hover {
+						border-color: #fff;
+					}
+					
+					.calculator br {
+						clear: both;
+					}
+				</style>
+				<form class="calculator" name="calc">
+					<div class="left">
+						<input type="text"   class="value"  name="input"/><br/>
+						<input type="button" class="button" value=" 1 " onclick="calc.input.value += '1'; " />
+						<input type="button" class="button" value=" 2 " onclick="calc.input.value += '2'; " />
+						<input type="button" class="button" value=" 3 " onclick="calc.input.value += '3'; " />
+						<input type="button" class="button" value=" + " onclick="calc.input.value += '+'; " />
+						<br />
+						<input type="button" class="button" value=" 4 " onclick="calc.input.value += '4'; " />
+						<input type="button" class="button" value=" 5 " onclick="calc.input.value += '5'; " />
+						<input type="button" class="button" value=" 6 " onclick="calc.input.value += '6'; " />
+						<input type="button" class="button" value=" - " onclick="calc.input.value += '-'; " />
+						<br />
+						<input type="button" class="button" value=" 7 " onclick="calc.input.value += '7'; " />
+						<input type="button" class="button" value=" 8 " onclick="calc.input.value += '8'; " />
+						<input type="button" class="button" value=" 9 " onclick="calc.input.value += '9'; " />
+						<input type="button" class="button" value=" * " onclick="calc.input.value += '*'; " />
+						<br />
+						<input type="button" class="button" value=" , " onclick="calc.input.value += '1'; " />
+						<input type="button" class="button" value=" 0 " onclick="calc.input.value += '2'; " />
+						<input type="button" class="button" value=" c " onclick="calc.input.value  = ''; " />
+						<input type="button" class="button" value=" = " onclick="calc.input.value = eval( calc.input.value ); " />
+						<br />
+					</div>
+					<div class="right">
+						<input type="text" class="tags" placeholder="Tags..."/><br/>
+						<textarea class="notes" placeholder="Notes..."></textarea>
+					</div>
+				</form>
+			</div>
+			<div class="buttons">
+				<button class="today">Heute</button>
+				<button class="yesterday secondary">Gestern</button>
+				<button class="date tertiary">anderer Tag</button>
+			</div>
 		</script>
 		<script type="application/javascript" src="/static/app.js"></script>
 		<script type="application/javascript" src="/static/entities.nodes.js"></script>
@@ -59,108 +158,7 @@
 			
 		</div>
 		<div id="dialog-region">
-			<div class="modal">
-				<div class="title">
-					<h3 class="value">Gehalt > Lebensmittel</h3>
-					<button class="close">&times;</button>
-				</div>
-				<div class="body">
-					<style type="text/css">
-						.calculator {
-						
-						}
-						
-						.left, .right {
-							float: left;
-						}
-						
-						.left {
-							margin-right: 8px;
-						}
-						
-						.right {
-							margin-left: 8px;
-							width: 413px;
-						}
-						
-						.right .tags,
-						.right .notes {
-							width: 100%;
-						}
-						
-						.right .notes {
-							height: 136px;
-						}
-						
-						
-						.calculator .tags,
-						.calculator .value {
-							margin: 0 0 6px 0;
-							height: 32px;
-							font-size: 32px;
-						}
-						
-						.calculator .value {
-							width: 264px;
-							text-align: right;
-							padding: 0 6px;
-						}
-						
-						.calculator .button {
-							width: 64px;
-							height: 32px;
-							margin: 0 5px 5px 2px;
-							float: left;
-							
-							background-color: #34495e;
-							border-color: #34495e;
-							outline-color: #34495e;
-						}
-						
-						.calculator .button:hover {
-							border-color: #fff;
-						}
-						
-						.calculator br {
-							clear: both;
-						}
-					</style>
-					<form class="calculator" name="calc">
-						<div class="left">
-							<input type="text"   class="value"  name="input"/><br/>
-							<input type="button" class="button" value=" 1 " onclick="calc.input.value += '1'; " />
-							<input type="button" class="button" value=" 2 " onclick="calc.input.value += '2'; " />
-							<input type="button" class="button" value=" 3 " onclick="calc.input.value += '3'; " />
-							<input type="button" class="button" value=" + " onclick="calc.input.value += '+'; " />
-							<br />
-							<input type="button" class="button" value=" 4 " onclick="calc.input.value += '4'; " />
-							<input type="button" class="button" value=" 5 " onclick="calc.input.value += '5'; " />
-							<input type="button" class="button" value=" 6 " onclick="calc.input.value += '6'; " />
-							<input type="button" class="button" value=" - " onclick="calc.input.value += '-'; " />
-							<br />
-							<input type="button" class="button" value=" 7 " onclick="calc.input.value += '7'; " />
-							<input type="button" class="button" value=" 8 " onclick="calc.input.value += '8'; " />
-							<input type="button" class="button" value=" 9 " onclick="calc.input.value += '9'; " />
-							<input type="button" class="button" value=" * " onclick="calc.input.value += '*'; " />
-							<br />
-							<input type="button" class="button" value=" , " onclick="calc.input.value += '1'; " />
-							<input type="button" class="button" value=" 0 " onclick="calc.input.value += '2'; " />
-							<input type="button" class="button" value=" c " onclick="calc.input.value  = ''; " />
-							<input type="button" class="button" value=" = " onclick="calc.input.value = eval( calc.input.value ); " />
-							<br />
-						</div>
-						<div class="right">
-							<input type="text" class="tags" placeholder="Tags..."/><br/>
-							<textarea class="notes" placeholder="Notes..."></textarea>
-						</div>
-					</form>
-				</div>
-				<div class="buttons">
-					<button class="today">Heute</button>
-					<button class="yesterday secondary">Gestern</button>
-					<button class="date tertiary">anderer Tag</button>
-				</div>
-			</div>
+			
 		</div>
 	</body>
 </html>
