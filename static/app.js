@@ -14,9 +14,7 @@ Marionette.ModalView = Marionette.ItemView.extend({
 	className: 'modal',
 	constructor: function(options) {
 		Marionette.ItemView.prototype.constructor.apply(this, arguments);
-		this.delegateEvents({
-			'click .close': '_onClose',
-		});
+		this.$el.on('click.delegateEvents' + this.cid, '.close', _.bind(this._onClose, this));
 	},
 	_onClose: function(e) {
 		this.close();

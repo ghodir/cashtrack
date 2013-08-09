@@ -4,13 +4,111 @@ CashTrack.module('Home.Screen', function(HomeScreen, CashTrack, Backbone, Marion
 		template: '#template-transaction',
 		ui: {
 			value: '.body .value',
+			today: '.body .today',
+			yesterday: '.body .yesterday',
+			otherday : '.body .otherday',
+		},
+		events: {
+			'click .today': function() {
+				this.create('today');
+			},
+			'click .yesterday': function() {
+				this.create( 'yesterday' );
+			},
+			'click .otherday': function() {
+			
+			}
+		},
+		buttons: {
+			today: {
+				type: 'primary',
+				text: 'Heute',
+				events: {
+					'click': function() {
+						console.log('Heute');
+					}
+				}
+			},
+			yesterday: {
+				type: 'secondary',
+				text: 'Gestern',
+				events: {
+					'click': function() {
+						console.log('Gestern');
+					}
+				}
+			},
+			otherday: {
+				type: 'tertiary',
+				text: 'anderer Tag',
+				events: {
+					'click': function() {
+						console.log('Ein anderer Tag');
+					}
+				}
+			}
 		},
 		initialize: function( options ) {
-			this.model = new Backbone.Model({source: options.source, destination: options.destination});
-			this.title = this.model.get('source').get('name') + ' > ' + this.model.get('destination').get('name');
+			this.source = options.source, this.destination = options.destination;
+			this.title = this.source.get('name') + ' > ' + this.destination.get('name');
 			
 			this.$el.on('keypress', $.proxy(this._onKeyPress, this));
 			this.value = 0.00;
+			
+			$(document).on('keydown.delegateEvents' + this.cid, $.proxy(this._keydown, this) );
+		},
+		onClose: function() {
+			$(document).off( '.delegateEvents' + this.cid );
+		},
+		onShow: function() {
+			this.ui.value.focus();
+		},
+		_keydown: function( e ) {
+			if( e.which == 13 ) {
+				this.create('today');
+			} else if( e.which == 27 ) {
+				this.close();
+			}
+		},
+		create: function( date ) {
+			var self = this;
+			
+			switch( date ) {
+				case 'today': date = new Date(); break;
+				case 'yesterday': (date = new Date()).setDate( date.getDate() - 1); break;
+			}
+			
+			var model = new CashTrack.Entities.Transaction({
+				date: date,
+				value: this.ui.value.val(),
+				source: this.source.get('name'),
+				destination: this.destination.get('name'),
+			});
+			
+			if( !model.isValid() ) {
+				this.errors( model.validationError );
+				model.validationErrors = undefined;
+			} else {
+				model.save(null, {
+					success: function() {
+						CashTrack.trigger('transaction:create', model);
+						self.close();
+					},
+					error: function() {
+						console.log( arguments );
+					}
+				});
+			}
+		},
+		errors: function(errors) {
+			if( errors.value )
+				this.ui.value.addClass('error');
+		},
+		serializeData: function() {
+			return {
+				source: this.source,
+				destination: this.destination,
+			};
 		},
 		_onKeyPress: function( e ) {
 			if( [
