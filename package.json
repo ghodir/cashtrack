@@ -2,7 +2,7 @@
 	"name": "cashtrack",
 	"author": "Jan Scheffler <scheffler@aionlabs.de>",
 	"description": "Keep track of your money",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"main": "./main.js",
 	"directories": {
 		"lib": "./lib"

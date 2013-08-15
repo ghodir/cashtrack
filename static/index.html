@@ -3,163 +3,152 @@
 	<head>
 		<meta charset="utf8" />
 		<title>cashtrack</title>
-		<link rel="stylesheet" href="/static/icons.css" />
-		<script type="application/javascript" src="/static/lib/jquery-1.9.1.js"></script>
-		<script type="application/javascript" src="/static/lib/jquery-ui.js"></script>
-		<script type="application/javascript" src="/static/lib/underscore.js"></script>
-		<script type="application/javascript" src="/static/lib/backbone.js"></script>
-		<script type="application/javascript" src="/static/lib/backbone.marionette.js"></script>
+		<meta name="viewport" content="width=device-width,
+                                   initial-scale=1.0,
+                                   maximum-scale=1.0,
+                                   user-scalable=no">
+								   
+		<link href='http://fonts.googleapis.com/css?family=Roboto:100&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="/static/default.css" />
 		<link rel="stylesheet" href="/static/style.css" />
 		<style type="text/css">
+		
+			#newtransaction .amount-wrapper {
+				text-align: right;
+				margin: 0 18px;
+				font-size: 2em;
+			}
+			
+			#newtransaction .amount {
+				display: inline-block;
+				width: 200px;
+				text-align: right;
+				padding-right: 2px;
+				vertical-align: top;
+				height: auto;
+				line-height: normal;
+				margin: 0;
+				border-bottom: 0;
+				
+				font-weight: 100;
+			}
+			
+			#newtransaction .amount.error {
+				color: #cc0000;
+			}
+			
+			#newtransaction .amount-wrapper .add-on {
+				display: inline-block;
+				height: 40px;
+				margin-left: -1px;
+				padding: 10px 0 10px 4px;
+				vertical-align: top;
+				
+				font-weight: 100;
+			}
+			
+			#newtransaction .category {
+				cursor: pointer;
+			}
+			
+			#newtransaction .category:last-child {
+				border-bottom: 0;
+			}
+			
+			#newtransaction .category .color {
+				display: inline-block;
+				width: .75em;
+				height: .75em;
+				margin-right: .5em;
+			}
+			
+			#newtransaction .category .radio {
+				float: right;
+				height: 43px;
+				line-height: 43px;
+				margin: 0;
+			}
+			
+			#newtranscation .category.selected .radio {
+				
+			}
+			
+			#newtransaction .input {
+				margin: 0 18px;
+			}
+			
+			#newtransaction .input label {
+				width: 100px;
+				height: 20px;
+				padding: 10px 0;
+				display: inline-block;
+			}
+			
+			#newtransaction .input input {
+				width: auto;
+				display: inline-block;
+				border-bottom: 1px solid #eee;
+			}
+			
+			#newtransaction .input:last-child input {
+				border-bottom: 0;
+			}
 			
 		</style>
 	</head>
 	<body>
-		<div id="main"></div>
-		<script type="text/template" id="template-home-screen">
-			<div class="section income">
-				<h2>Einnahmen</h2>
-				<div class="nodes"></div>
-			</div>
-			<div class="section accounts">
-				<h2>Konten</h2>
-				<div class="nodes"></div>
-			</div>
-			<div class="section categories">
-				<h2>Ausgaben</h2>
-				<div class="nodes"></div>
-			</div>
-			<div class="section goals">
-				<h2>Sparziele</h2>
-				<div class="nodes"></div>
-			</div>
-		</script>
-		<script type="text/template" id="template-node">
-			<span class="label"><%= name %></span>
-			<span aria-hidden="true" class="icon icon-<%= icon %>"></span>
-			<span class="value">
-				<%= actual %><% if( budget ) { %>/<%= budget %><% } %> €
-			</span>
-		</script>
-		<script type="text/template" id="template-transaction">
-			<div class="title">
-				<h3 class="value">Gehalt > Lebensmittel</h3>
-				<button class="close">&times;</button>
-			</div>
-			<div class="body">
-				<style type="text/css">
-					.calculator {
-					
-					}
-					
-					.left, .right {
-						float: left;
-					}
-					
-					.left {
-						margin-right: 8px;
-					}
-					
-					.right {
-						margin-left: 8px;
-						width: 413px;
-					}
-					
-					.right .tags,
-					.right .notes {
-						width: 100%;
-					}
-					
-					.right .notes {
-						height: 136px;
-					}
-					
-					
-					.calculator .tags,
-					.calculator .value {
-						margin: 0 0 6px 0;
-						height: 32px;
-						font-size: 32px;
-					}
-					
-					.calculator .value {
-						width: 264px;
-						text-align: right;
-						padding: 0 6px;
-					}
-					
-					.calculator .button {
-						width: 64px;
-						height: 32px;
-						margin: 0 5px 5px 2px;
-						float: left;
-						
-						background-color: #34495e;
-						border-color: #34495e;
-						outline-color: #34495e;
-					}
-					
-					.calculator .button:hover {
-						border-color: #fff;
-					}
-					
-					.calculator br {
-						clear: both;
-					}
-				</style>
-				<form class="calculator" name="calc">
-					<div class="left">
-						<input type="text"   class="value"  name="input"/><br/>
-						<input type="button" class="button" value=" 1 " onclick="calc.input.value += '1'; " />
-						<input type="button" class="button" value=" 2 " onclick="calc.input.value += '2'; " />
-						<input type="button" class="button" value=" 3 " onclick="calc.input.value += '3'; " />
-						<input type="button" class="button" value=" + " onclick="calc.input.value += '+'; " />
-						<br />
-						<input type="button" class="button" value=" 4 " onclick="calc.input.value += '4'; " />
-						<input type="button" class="button" value=" 5 " onclick="calc.input.value += '5'; " />
-						<input type="button" class="button" value=" 6 " onclick="calc.input.value += '6'; " />
-						<input type="button" class="button" value=" - " onclick="calc.input.value += '-'; " />
-						<br />
-						<input type="button" class="button" value=" 7 " onclick="calc.input.value += '7'; " />
-						<input type="button" class="button" value=" 8 " onclick="calc.input.value += '8'; " />
-						<input type="button" class="button" value=" 9 " onclick="calc.input.value += '9'; " />
-						<input type="button" class="button" value=" * " onclick="calc.input.value += '*'; " />
-						<br />
-						<input type="button" class="button" value=" , " onclick="calc.input.value += '1'; " />
-						<input type="button" class="button" value=" 0 " onclick="calc.input.value += '2'; " />
-						<input type="button" class="button" value=" c " onclick="calc.input.value  = ''; " />
-						<input type="button" class="button" value=" = " onclick="calc.input.value = eval( calc.input.value ); " />
-						<br />
-					</div>
-					<div class="right">
-						<input type="text" class="tags" placeholder="Tags..."/><br/>
-						<textarea class="notes" placeholder="Notes..."></textarea>
-					</div>
-				</form>
-			</div>
-			<div class="buttons">
-				<button class="today">Heute</button>
-				<button class="yesterday secondary">Gestern</button>
-				<button class="date tertiary">anderer Tag</button>
-			</div>
-		</script>
-		<script type="application/javascript" src="/static/app.js"></script>
-		<script type="application/javascript" src="/static/entities.nodes.js"></script>
-		<script type="application/javascript" src="/static/entities.transaction.js"></script>
-		<script type="application/javascript" src="/static/entities.subcollection.js"></script>
-		<script type="application/javascript" src="/static/home.js"></script>
-		<script type="application/javascript" src="/static/home.screen.js"></script>
-		<script type="application/javascript">
-			CashTrack.start();
-		</script>
-		<div id="header">
+		<script type="application/javascript" src="/static/lib/zepto.js"></script>
+		<script type="application/javascript" src="/static/lib/app.js"></script>
+		<script type="application/javascript" src="/static/main.js"></script>
 		
+		<div id="overview" class="app-page" data-page="overview">
+			<div class="app-topbar">
+				<div class="app-title">Übersicht</div>
+				<div class="app-button right" data-target="newtransaction">+</div>
+			</div>
+			<div class="app-content"></div>
 		</div>
-		<div id="content-region">
-			
+		
+		<div id="newtransaction" class="app-page" data-page="newtransaction">
+			<div class="app-topbar">
+				<div class="app-button left back">&#x2717; Abbrechen</div>
+				<div class="app-button right save">&#x2713; Speichern</div>
+			</div>
+			<div class="app-content">
+				<div class="app-section">
+					<div class="amount-wrapper">
+						<input class="app-input amount" type="text" value="0,00" /><span class="add-on">€</span>
+					</div>
+				</div>
+				<ul class="app-list app-section categories" size="5">
+					<li class="category template" data-category="">
+						<span class="color"></span>
+						<span class="name"></span>
+						<input class="radio" type="radio">
+					</li>
+				</ul>
+				<div class="app-section further" >
+					<div class="input">
+						<label for="date">Datum:</label>
+						<input class="app-input date" value="Heute" name="date"/>
+					</div>
+					<div class="input">
+						<label for="notes">Notizen:</label>
+						<input class="app-input notes" value="" name="notes"/>
+					</div>
+				</div>
+				<div class="app-section">
+					<div class="app-button save">Speichern</div>
+				</div>
+			</div>
 		</div>
-		<div id="dialog-region">
-			
-		</div>
+		
+		<script type="application/javascript">
+			try {
+				App.restore();
+			} catch( err ) {
+				App.load('overview');
+			}
+		</script>
 	</body>
 </html>
