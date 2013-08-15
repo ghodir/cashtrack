@@ -1,0 +1,141 @@
+.app-android {
+	//font-family: 'Open Sans', sans-serif;
+}
+
+#overview .app-content {
+	text-align: center;
+}
+
+#overview .wrapper {
+	margin-top: 2em;
+}
+
+#overview .month {
+	font-size: 1.5em;
+}
+
+#overview .expenses {
+	font-size: 3em;
+	font-weight: 100;
+}
+
+#overview .categories {
+	margin: 3em 8px 8px;
+	list-style: none;
+	
+}
+
+#overview .category {
+	font-weight: 300;
+}
+
+#overview .category:after {
+	clear: both;
+	display: table;
+	content: ' ';
+}
+
+#overview .category .left {
+	width: 49%;
+	margin-right: 1%;
+	float: left;
+	display: inline-block;
+	text-align: right;
+}
+
+#overview .category .right {
+	width: 49%;
+	margin-left: 1%;
+	text-align: left;
+	display: inline-block;
+}
+
+#overview .category .bar {
+	display: block;
+	width: 30px;
+	height: 40px;
+	margin: 4px 0;
+	background: #ccc;
+}
+
+
+#newtransaction .amount-wrapper {
+	text-align: right;
+	margin: 0 18px;
+	font-size: 2em;
+}
+
+#newtransaction .amount {
+	display: inline-block;
+	width: 200px;
+	text-align: right;
+	padding-right: 2px;
+	vertical-align: top;
+	height: auto;
+	line-height: normal;
+	margin: 0;
+	border-bottom: 0;
+	
+	font-weight: 100;
+}
+
+#newtransaction .amount.error {
+	color: #cc0000;
+}
+
+#newtransaction .amount-wrapper .add-on {
+	display: inline-block;
+	height: 40px;
+	margin-left: -1px;
+	padding: 10px 0 10px 4px;
+	vertical-align: top;
+	
+	font-weight: 100;
+}
+
+#newtransaction .category {
+	cursor: pointer;
+}
+
+#newtransaction .category:last-child {
+	border-bottom: 0;
+}
+
+#newtransaction .category .color {
+	display: inline-block;
+	width: .75em;
+	height: .75em;
+	margin-right: .5em;
+}
+
+#newtransaction .category .radio {
+	float: right;
+	height: 43px;
+	line-height: 43px;
+	margin: 0;
+}
+
+#newtranscation .category.selected .radio {
+	
+}
+
+#newtransaction .input {
+	margin: 0 18px;
+}
+
+#newtransaction .input label {
+	width: 100px;
+	height: 20px;
+	padding: 10px 0;
+	display: inline-block;
+}
+
+#newtransaction .input input {
+	width: auto;
+	display: inline-block;
+	border-bottom: 1px solid #eee;
+}
+
+#newtransaction .input:last-child input {
+	border-bottom: 0;
+}

@@ -8,95 +8,17 @@
                                    maximum-scale=1.0,
                                    user-scalable=no">
 								   
-		<link href='http://fonts.googleapis.com/css?family=Roboto:100&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+		<link href='/static/fonts/roboto.css' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/static/default.css" />
 		<link rel="stylesheet" href="/static/style.css" />
 		<style type="text/css">
-		
-			#newtransaction .amount-wrapper {
-				text-align: right;
-				margin: 0 18px;
-				font-size: 2em;
-			}
-			
-			#newtransaction .amount {
-				display: inline-block;
-				width: 200px;
-				text-align: right;
-				padding-right: 2px;
-				vertical-align: top;
-				height: auto;
-				line-height: normal;
-				margin: 0;
-				border-bottom: 0;
-				
-				font-weight: 100;
-			}
-			
-			#newtransaction .amount.error {
-				color: #cc0000;
-			}
-			
-			#newtransaction .amount-wrapper .add-on {
-				display: inline-block;
-				height: 40px;
-				margin-left: -1px;
-				padding: 10px 0 10px 4px;
-				vertical-align: top;
-				
-				font-weight: 100;
-			}
-			
-			#newtransaction .category {
-				cursor: pointer;
-			}
-			
-			#newtransaction .category:last-child {
-				border-bottom: 0;
-			}
-			
-			#newtransaction .category .color {
-				display: inline-block;
-				width: .75em;
-				height: .75em;
-				margin-right: .5em;
-			}
-			
-			#newtransaction .category .radio {
-				float: right;
-				height: 43px;
-				line-height: 43px;
-				margin: 0;
-			}
-			
-			#newtranscation .category.selected .radio {
-				
-			}
-			
-			#newtransaction .input {
-				margin: 0 18px;
-			}
-			
-			#newtransaction .input label {
-				width: 100px;
-				height: 20px;
-				padding: 10px 0;
-				display: inline-block;
-			}
-			
-			#newtransaction .input input {
-				width: auto;
-				display: inline-block;
-				border-bottom: 1px solid #eee;
-			}
-			
-			#newtransaction .input:last-child input {
-				border-bottom: 0;
-			}
 			
 		</style>
 	</head>
 	<body>
+		<script type="application/javascript" src="/static/lib/underscore.js"></script>
+		<script type="application/javascript" src="/static/lib/globalize.js"></script>
+		<script type="application/javascript" src="/static/lib/globalize.culture.de.js"></script>
 		<script type="application/javascript" src="/static/lib/zepto.js"></script>
 		<script type="application/javascript" src="/static/lib/app.js"></script>
 		<script type="application/javascript" src="/static/main.js"></script>
@@ -106,7 +28,25 @@
 				<div class="app-title">Übersicht</div>
 				<div class="app-button right" data-target="newtransaction">+</div>
 			</div>
-			<div class="app-content"></div>
+			<div class="app-content">
+				<div class="wrapper">
+					<div class="top">
+						<div class="month"></div>
+						<div class="expenses"></div>
+					</div>
+					<ul class="categories">
+						<li class="category template">
+							<div class="left">
+								<div class="name"></div>
+								<div class="amount"></div>
+							</div>
+							<div class="right">
+								<div class="bar"></div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 		
 		<div id="newtransaction" class="app-page" data-page="newtransaction">
