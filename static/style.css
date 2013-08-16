@@ -2,6 +2,27 @@
 	//font-family: 'Open Sans', sans-serif;
 }
 
+.app-button.newtransaction {
+	font-size: 2.5em;
+	margin-top: -3px;
+}
+
+#home .app-list li {
+	margin: 0;
+	padding: 2px 18px 2px 26px;
+}
+
+#home .app-list .left {
+	float: left
+}
+
+#home .app-list .right {
+	float: right;
+	font-size: 2em;
+	font-weight: bold;
+	margin-top: -5px;
+}
+
 #overview .app-content {
 	text-align: center;
 }
@@ -52,7 +73,7 @@
 
 #overview .category .bar {
 	display: block;
-	width: 30px;
+	width: 0px;
 	height: 40px;
 	margin: 4px 0;
 	background: #ccc;
@@ -138,4 +159,113 @@
 
 #newtransaction .input:last-child input {
 	border-bottom: 0;
+}
+
+#history select.category {
+	float: right;
+	margin: 1em 8px;
+}
+
+#history .history {
+	clear: both;
+}
+
+#history .month .header {
+	font-weight: bold;
+	padding: 2px 18px 2px 6px;
+	border-bottom: 3px double #EEE;
+	
+	position: relative;
+}
+
+#history .month.empty .header {
+	border-bottom-color: transparent;
+}
+
+#history .month.folded .header {
+	border-bottom-color: transparent;
+	transition: border .4s .4s;
+	-o-transition: border .4s .4s;
+	-moz-transition: border .4s .4s;
+	-webkit-transition: border .4s .4s;
+}
+
+#history .month .header .expand {
+	display: inline-block;
+	font-size: 2em;
+	width: 11px;
+	height: 11px;
+	line-height: 4.7px;
+	margin-right: 7px;
+	margin-left: 2px;
+}
+
+#history .month.empty .header .expand {
+	visibility: hidden;
+}
+
+.app-loaded #history .month .header .expand {
+	transition: transform .4s;
+	-o-transition: -o-transform .4s;
+	-moz-transition: -moz-transform .4s;
+	-webkit-transition: -webkit-transform .4s;
+}
+
+#history .month.expanded .header .expand{
+	transform: rotate(90deg);
+	-o-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg); 
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+#history .month.folded .header .expand {
+	transform: rotate(-90deg);	
+	-o-transform: rotate(-90deg);	
+	-moz-transform: rotate(-90deg);	
+	-webkit-transform: rotate(-90deg); 
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+
+#history .month .header .name {
+	display: inline;
+}
+
+#history .month .header .amount {
+	float: right;
+}
+
+#history .month .transactions {
+	list-style: none;
+	transition: height .4s;
+	-o-transition: height .4s;
+	-moz-transition: height .4s;
+	-webkit-transition: height .4s;
+}
+
+#history .month .transaction {
+	margin: 0;
+	padding: 2px 18px 2px 26px;
+	font-weight: normal;
+	font-size: .8em;
+	
+	line-height: 2em;
+	height: 2em;
+}
+
+#history .month .transaction .date {
+	display: inline-block;
+	width: 60px;
+}
+
+#history .month .transaction .color {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	margin-right: 1em;
+}
+
+#history .month .transaction .amount {
+	float: right;
 }

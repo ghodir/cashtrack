@@ -22,11 +22,28 @@
 		<script type="application/javascript" src="/static/lib/zepto.js"></script>
 		<script type="application/javascript" src="/static/lib/app.js"></script>
 		<script type="application/javascript" src="/static/main.js"></script>
-		
+
+
+		<div id="home" class="app-page" data-page="home">
+			<div class="app-topbar">
+				<div class="app-title">Home</div>
+				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
+			</div>
+			<div class="app-content">
+				<ul class="app-section app-list">
+					<li class="app-button" data-target="overview"><span class="left">Übersicht</span><span class="right">&rsaquo;</span></li>
+					<li class="app-button" data-target="history"><span class="left">Verlauf</span><span class="right">&rsaquo;</span></li>
+				</ul>
+			</div>
+		</div>
+
+
+
 		<div id="overview" class="app-page" data-page="overview">
 			<div class="app-topbar">
+				<div class="app-button" data-back="true">Menü</div>
 				<div class="app-title">Übersicht</div>
-				<div class="app-button right" data-target="newtransaction">+</div>
+				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
 			</div>
 			<div class="app-content">
 				<div class="wrapper">
@@ -49,6 +66,8 @@
 			</div>
 		</div>
 		
+
+
 		<div id="newtransaction" class="app-page" data-page="newtransaction">
 			<div class="app-topbar">
 				<div class="app-button left back">&#x2717; Abbrechen</div>
@@ -70,7 +89,7 @@
 				<div class="app-section further" >
 					<div class="input">
 						<label for="date">Datum:</label>
-						<input class="app-input date" value="Heute" name="date"/>
+						<input class="app-input date" value="Heute" name="date" type="date"/>
 					</div>
 					<div class="input">
 						<label for="notes">Notizen:</label>
@@ -78,8 +97,25 @@
 					</div>
 				</div>
 				<div class="app-section">
-					<div class="app-button save">Speichern</div>
+					<div class="app-button blue save">Speichern</div>
 				</div>
+			</div>
+		</div>
+		
+		
+		<div id="history" class="app-page" data-page="history">
+			<div class="app-topbar">
+				<div class="app-button" data-back="true">Menü</div>
+				<div class="app-title">Verlauf</div>
+				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
+			</div>
+			<div class="app-content">
+				<select class="category">
+					<option value="">Alle</option>
+				</select>
+				<ul class="history">
+					
+				</ul>
 			</div>
 		</div>
 		
@@ -87,7 +123,7 @@
 			try {
 				App.restore();
 			} catch( err ) {
-				App.load('overview');
+				App.load('home');
 			}
 		</script>
 	</body>
