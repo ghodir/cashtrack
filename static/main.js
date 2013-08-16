@@ -262,11 +262,14 @@
 				
 				var trans = CashTrack.request('transactions', category ? { destination: {$eq: category} } : null);
 				
+				if( !trans.length )
+					return false;
+					
 				var min = new Date( _.min( trans, function( transaction ) { return new Date( transaction.date); }).date );
 					min.setDate(1)
 					min.setHours(0, 0, 0, 0);
 				
-				if( start < min )
+				if( !min || start < min )
 					return false;
 				
 				var $container = $('<ul>').addClass('app-list transactions');
