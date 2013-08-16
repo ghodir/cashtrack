@@ -1,6 +1,56 @@
 (function() {
 	"use strict";
 	
+	var CashTrack = new Application();
+	
+	(function() {
+		var categories = [];
+		if( localStorage['categories'] )
+			categories = JSON.parse( localStorage['categories'] );
+		else 
+			categories = [
+				{ id: 1, name: 'Andere', color: '#7f8c8d', default: true },
+				{ id: 2, name: 'Essen und Trinken', color: '#2ecc71' },
+				{ id: 3, name: 'Freizeit',	color: '#2980b9' },
+				{ id: 4, name: 'Gesundheit', color: '#c0392b' },
+				{ id: 5, name: 'Verkehr & Transport', color: '#f39c12' }
+			];
+				
+		CashTrack.reqres.setHandler('categories', function(query) {
+			return !query ? categories : sift(query, categories);
+		});
+		
+		CashTrack.reqres.setHandler('category', function(id) {
+			return _.find( categories, function( category ) {
+				return category.id == id;
+			});
+		});
+	})(CashTrack);
+	
+	(function() {
+		var transactions;
+		if( localStorage['transactions'] ) {
+			transactions = JSON.parse( localStorage['transactions'] );
+			_.map(transactions, function( t ) {
+				t.date = new Date( t.date );
+				return t;
+			});
+		} else 
+			transactions = [];
+		
+		CashTrack.reqres.setHandler('transactions', function( query ) {
+			return !query ? transactions : sift(query, transactions);
+		});
+		
+		CashTrack.reqres.setHandler('transaction', function(id) {
+			return _.find( transactions, function( transaction ) {
+				return transaction.id == id;
+			});
+		});
+		
+	})(CashTrack);
+	
+	
 	var colors = [ '#1ABC9C','#16A085','#2ECC71','#27AE60','#3498DB','#2980B9','#9B59B6','#8E44AD','#34495E	','#2C3E50','#F1C40F','#F39C12','#E67E22','#D35400','#E74C3C','#C0392B','#ECF0F1','#BDC3C7','#95A5A6','#7F8C8D'];
 	function hexToRgb(hex) {
 		var bigint = parseInt(hex.slice(1), 16);
@@ -13,34 +63,12 @@
 	
 	Globalize.culture('de');
 	
-	var categories = [];
-	if( localStorage['categories'] )
-		categories = JSON.parse( localStorage['categories'] );
-	else 
-		categories = [
-			{ id: 1, name: 'Andere', color: '#7f8c8d', default: true },
-			{ id: 2, name: 'Essen und Trinken', color: '#2ecc71' },
-			{ id: 3, name: 'Freizeit',	color: '#2980b9' },
-			{ id: 4, name: 'Gesundheit', color: '#c0392b' },
-			{ id: 5, name: 'Verkehr & Transport', color: '#f39c12' }
-		];
-	
-	var transactions;
-	if( localStorage['transactions'] )
-		transactions = JSON.parse( localStorage['transactions'] );
-	else 
-		transactions = [];
-		
-	function getCategoryById( id ) {
-		return _.find( categories, function( category ) {
-			return category.id == id;
-		});
-	}
-	
+	/*
 	$( window ).on('unload', function() {
 		localStorage['categories'] = JSON.stringify( categories );
 		localStorage['transactions'] = JSON.stringify( transactions );
 	});
+	*/
 	
 	App.populator('overview', function(page, args) {
 		var template = $(page).find('.categories .template').removeClass('template').remove();
@@ -58,19 +86,18 @@
 			
 			var sum = 0.00;
 			var amounts = {};
+			var transactions = CashTrack.request('transactions', { date: {	$gte: start, $lte: end } });
 			_.each( transactions, function( transaction ) {
-				var date = new Date(transaction.date);
-				if( start <= date && date <= end ) {
-					sum += transaction.amount;
-					if( amounts[ transaction.destination ] )
-						amounts[ transaction.destination ] += transaction.amount;
-					else
-						amounts[ transaction.destination ] = transaction.amount;
-				}
+				sum += transaction.amount;
+				if( amounts[ transaction.destination ] )
+					amounts[ transaction.destination ] += transaction.amount;
+				else
+					amounts[ transaction.destination ] = transaction.amount;
 			});
 			
 			var max = 0.0;
 			var percentages = {};
+			var categories = CashTrack.request('categories');
 			_.each( categories, function( category ) {
 				percentages[ category.id ] = amounts[ category.id ] / sum;
 				if( percentages[ category.id ] > max )
@@ -147,7 +174,8 @@
 				case 'Heute': transaction.date = new Date(); break;
 			};
 				
-			transactions.push( transaction );
+			debugger;
+			//transactions.push( transaction );
 			App.back();
 		});
 		
@@ -174,8 +202,7 @@
 		
 		var container = $(document.createDocumentFragment());
 		var template = $(page).find('.categories .template').removeClass('template').remove();
-		for( var index in categories ) {
-			var category = categories[index];
+		_.each( CashTrack.request('categories'), function(category) {
 			var item = $(template[0].cloneNode(true));
 				item.data('category', category.id );
 				item.find('.name').text( category.name );
@@ -193,7 +220,7 @@
 					$(this).addClass('selected');
 					$(this).find('.radio').attr('checked', 'true');
 				});
-		}
+		});
 		
 		$(page).find('.categories').append( $(container) );
 		
@@ -204,6 +231,8 @@
 	
 	App.populator('history', function(page, args) {
 		$( page ).on('appShow', function() {
+			
+			var categories = CashTrack.request('categories');
 			
 			var select = $( page ).find('.category').empty();
 			select.append( $('<option>').attr('value', '').text( 'Alle' 	) );
@@ -231,9 +260,7 @@
 				end.setMonth( end.getMonth() - months );
 				start.setMonth( start.getMonth() - months );
 				
-				var trans = _.filter( transactions, function( t ) {
-					return !category || t.destination == category;
-				});
+				var trans = CashTrack.request('transactions', category ? { destination: {$eq: category} } : null);
 				
 				var min = new Date( _.min( trans, function( transaction ) { return new Date( transaction.date); }).date );
 					min.setDate(1)
@@ -253,7 +280,7 @@
 					
 					sum += transaction.amount;
 					
-					var c = getCategoryById( transaction.destination );
+					var c = CashTrack.request('category', parseInt(transaction.destination) );
 					
 					var $item = $('<li>').addClass('transaction');
 						$item.append( $('<span>').addClass('date').text( Globalize.format( new Date(transaction.date), 'ddd, d.') ) );
@@ -291,7 +318,6 @@
 				
 				if( months == 0 ) {
 					$section.addClass('expanded');
-					//debugger;
 					$container.css('height', $container.height() + 'px');
 				} else {
 					$section.addClass('folded')
@@ -310,5 +336,16 @@
 			while( showMonth( i++) )
 				;
 		});
+	});
+	
+	App.populator('distribution', function(page, args) {
+		$(page).on('appShow', function() {
+			var $chart = $( page ).find('.chart');
+			var paper = Raphael( $chart[0] );
+				//paper.
+			
+		});
+	}, function() {
+	
 	});
 })();
