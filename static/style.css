@@ -173,6 +173,7 @@
 #history .month .header {
 	font-weight: bold;
 	padding: 2px 18px 2px 6px;
+	line-height: 2em;
 	border-bottom: 3px double #EEE;
 	
 	position: relative;
@@ -268,4 +269,9 @@
 
 #history .month .transaction .amount {
 	float: right;
+}
+
+
+#distribution .chart {
+	margin: 1em auto;
 }

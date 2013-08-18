@@ -89,15 +89,27 @@
 		}
 	});
 	
+	var Commands = Handlers.extend('Commands', {
+		execute: function() {
+			var name = arguments[0];
+			var args = Array.prototype.slice.call(arguments, 1);
+			this.getHandler(name).apply(this, args);
+		}
+	});
+	
 	
 	var Application = root.Application = function(options) {
 		this.reqres = new RequestResponse();
+		this.commands = new Commands();
 	}
 	
 	_.extend(Application.prototype, {
 		request: function() {
 			var args = Array.prototype.slice.apply( arguments );
 			return this.reqres.request.apply(this.reqres, args);
+		},
+		execute: function() {
+			return this.commands.execute.apply(this.commands, arguments);
 		}
 	});
 	

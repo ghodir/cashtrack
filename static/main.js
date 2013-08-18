@@ -7,7 +7,7 @@
 		var categories = [];
 		if( localStorage['categories'] )
 			categories = JSON.parse( localStorage['categories'] );
-		else 
+		else {
 			categories = [
 				{ id: 1, name: 'Andere', color: '#7f8c8d', default: true },
 				{ id: 2, name: 'Essen und Trinken', color: '#2ecc71' },
@@ -15,6 +15,12 @@
 				{ id: 4, name: 'Gesundheit', color: '#c0392b' },
 				{ id: 5, name: 'Verkehr & Transport', color: '#f39c12' }
 			];
+			
+			localStorage['category_id'] = 5;
+			localStorage['categories'] = JSON.stringify( categories );
+		}
+		
+		var id = localStorage['category_id'] || 0
 				
 		CashTrack.reqres.setHandler('categories', function(query) {
 			return !query ? categories : sift(query, categories);
@@ -25,18 +31,46 @@
 				return category.id == id;
 			});
 		});
+		
+		CashTrack.reqres.setHandler('category.create', function( data ) {
+			return new Category( data );
+		});
+		
+		CashTrack.reqres.setHandler('category.update', function( category ) {
+			if( !category.id ) {
+				category.id = ++id;
+				localStorage['category_id'] = id;
+			}
+			
+			categories.push( category );
+			localStorage['categories'] = JSON.stringify( categories );
+		});
+		
+		CashTrack.reqres.setHandler('categorie.remove', function( category ) {
+			var index = categories.indexOf( category );
+			if( ~index ) {
+				delete categories[ index ];
+				localStorage['categories'] = JSON.stringify( categories );
+			}
+		});
+		
 	})(CashTrack);
 	
 	(function() {
-		var transactions;
+		var Transaction = function( data ) {
+			_.extend(this, data);
+		};
+	
+		var transactions = [];
 		if( localStorage['transactions'] ) {
 			transactions = JSON.parse( localStorage['transactions'] );
 			_.map(transactions, function( t ) {
 				t.date = new Date( t.date );
 				return t;
 			});
-		} else 
-			transactions = [];
+		}
+		
+		var id = localStorage['transactions_id'] || 0;
 		
 		CashTrack.reqres.setHandler('transactions', function( query ) {
 			return !query ? transactions : sift(query, transactions);
@@ -48,6 +82,27 @@
 			});
 		});
 		
+		CashTrack.reqres.setHandler('transaction.create', function( data ) {
+			return new Transaction( data );
+		});
+		
+		CashTrack.reqres.setHandler('transaction.update', function( transaction ) {
+			if( !transaction.id ) {
+				transaction.id = ++id;
+				localStorage['transactions_id'] = id;
+			}
+			
+			transactions.push( transaction );
+			localStorage['transactions'] = JSON.stringify( transactions );
+		});
+		
+		CashTrack.reqres.setHandler('transaction.remove', function( transaction ) {
+			var index = transaction.indexOf( transaction );
+			if( ~index ) {
+				delete transactions[ index ];
+				localStorage['transactions'] = JSON.stringify( transactions );
+			}
+		});
 	})(CashTrack);
 	
 	
@@ -62,13 +117,6 @@
 	}
 	
 	Globalize.culture('de');
-	
-	/*
-	$( window ).on('unload', function() {
-		localStorage['categories'] = JSON.stringify( categories );
-		localStorage['transactions'] = JSON.stringify( transactions );
-	});
-	*/
 	
 	App.populator('overview', function(page, args) {
 		var template = $(page).find('.categories .template').removeClass('template').remove();
@@ -145,7 +193,7 @@
 		
 		$(page).find('.save').on('click', function() {
 			var errors = {};
-			var transaction = {};
+			var transaction = CashTrack.request('transaction.create');
 				transaction.amount = $(page).find('.amount').val();
 				transaction.destination = $(page).find('.category.selected').data('category');
 				transaction.date = $( page ).find('.date').val();
@@ -174,8 +222,7 @@
 				case 'Heute': transaction.date = new Date(); break;
 			};
 				
-			debugger;
-			//transactions.push( transaction );
+			CashTrack.request('transaction.update', transaction);
 			App.back();
 		});
 		
@@ -343,12 +390,36 @@
 	
 	App.populator('distribution', function(page, args) {
 		$(page).on('appShow', function() {
+			var now = new Date(), y = now.getFullYear(), m = now.getMonth();
+			var start = new Date(y, m, 1);
+			var end   = new Date(y, m + 1, 0);
+			var transactions = CashTrack.request('transactions', { date: { $gte: start, $lt: end }});
+			var sums = {};
+			var total = 0.0;
+			var categories = [];
+			
+			_.each(transactions, function( transaction ) {
+				total += transaction.amount;
+				sums[ transaction.destination ] = (sums[ transaction.destination ] || 0) + transaction.amount;
+				~categories.indexOf( transaction.destination) || categories.push( transaction.destination );
+			});
+			
+			var items = []
+			_.each(categories, function( category ) {
+				items.push({value: sums[ category ], color: CashTrack.request('category', category).color });
+			});
+			
 			var $chart = $( page ).find('.chart');
-			var paper = Raphael( $chart[0] );
-				//paper.
+				$chart.css({
+					width: '200px',
+					height: '200px'
+				});
+				
+			this.paper ? this.paper.clear() : ( this.paper = Raphael( $chart[0] ) );
+			this.paper.drawPieChart(100, 100, 100, items);
 			
 		});
 	}, function() {
-	
+		
 	});
 })();

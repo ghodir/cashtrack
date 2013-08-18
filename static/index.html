@@ -20,6 +20,8 @@
 		<script type="application/javascript" src="/static/lib/globalize.js"></script>
 		<script type="application/javascript" src="/static/lib/globalize.culture.de.js"></script>
 		<script type="application/javascript" src="/static/lib/zepto.js"></script>
+		<script type="application/javascript" src="/static/lib/raphael.js"></script>
+		<script type="application/javascript" src="/static/raphael.chart.js"></script>
 		<script type="application/javascript" src="/static/lib/app.js"></script>
 		<script type="application/javascript" src="/static/lib/sift.js"></script>
 		<script type="application/javascript" src="/static/app.js"></script>
@@ -36,6 +38,7 @@
 					<li class="app-button" data-target="overview"><span class="left">Übersicht</span><span class="right">&rsaquo;</span></li>
 					<li class="app-button" data-target="history"><span class="left">Verlauf</span><span class="right">&rsaquo;</span></li>
 					<li class="app-button" data-target="budget"><span class="left">Budget</span><span class="right">&rsaquo;</span></li>
+					<li class="app-button" data-target="distribution"><span class="left">Verteilung</span><span class="right">&rsaquo;</span></li>
 				</ul>
 			</div>
 		</div>
@@ -129,6 +132,19 @@
 				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
 			</div>
 			<div class="app-content">
+				
+			</div>
+		</div>
+		
+		
+		
+		<div id="distribution" class="app-page" data-page="distribution">
+			<div class="app-topbar">
+				<div class="app-button" data-back="true">Menü</div>
+				<div class="app-title">Verteilung</div>
+				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
+			</div>
+			<div class="app-content">
 				<div class="chart">
 				
 				</div>
@@ -140,6 +156,7 @@
 				</div>
 			</div>
 		</div>
+		
 		
 		<script type="application/javascript">
 			try {
