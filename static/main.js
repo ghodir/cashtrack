@@ -406,7 +406,12 @@
 			
 			var items = []
 			_.each(categories, function( category ) {
-				items.push({value: sums[ category ], color: CashTrack.request('category', category).color });
+				var category = CashTrack.request('category', category);
+				items.push({
+					value: sums[ category.id ],
+					color: category.color,
+					label: category.name
+				});
 			});
 			
 			var $chart = $( page ).find('.chart');
@@ -420,6 +425,6 @@
 			
 		});
 	}, function() {
-		
+		this.paper && this.paper.remove();
 	});
 })();

@@ -3,6 +3,7 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 		rad = Math.PI / 180,
 		chart = this.set();
 		
+		
 	function colorLuminance(hex, lum) {
 		// validate hex string
 		hex = String(hex).replace(/[^0-9a-f]/gi, '');
@@ -29,17 +30,26 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 	}
 	
 	var angle = 0,
-		total = 0;
+		total = 0,
+		value = paper.text(cx, cy - 8, '').attr({'font-family': 'Roboto', 'font-size': '42px', 'font-weight': '200'});
+		label = paper.text(cx, cy + 24, '').attr({'font-family': 'Roboto', 'font-size': '16px', });
 		
+		
+	chart.push( value );
+	chart.push( label );
+	
+	var markers = [];
 	function drawSegment( i ) {
-		var r1 = radius - 20,
+		var r1 = radius - 22,
 			r2 = radius - 10,
-			value = items[ i ].value,
+			r3 = radius - 5,
+			val = items[ i ].value,
 			color1 = items[ i ].color,
 			color2 = colorLuminance(color1, -.5),
-			delta = value / total * 360.0,
-			coords1 = sector(cx, cy, r1, angle + 2, angle + delta - 2 ),
+			delta = val / total * 360.0,
+			coords1 = sector(cx, cy, r1, angle + 2, angle + delta - 2),
 			coords2 = sector(cx, cy, r2, angle + 2, angle + delta - 2),
+			coords3 = sector(cx, cy, r3, angle + 2, angle + delta - 2),
 			path  = paper.path(['M', coords1[0], coords1[1], 'L', coords2[0], coords2[1], 
 								'A', r2, r2, 0, +(delta > 180), 0, coords2[2], coords2[3],
 								'L', coords1[2], coords1[3], 'A', r1, r1, 0, +(delta > 180),
@@ -48,7 +58,31 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 				fill: color1,
 				stroke: color2,
 				'stroke-width': 1,
+				'cursor': 'pointer'
 			});
+			
+			
+			var marker = paper.path(['M', coords3[0], coords3[1], 'A', r3, r3, 0, +( delta > 180), 0, coords3[2], coords3[3]]);
+				marker.attr({
+					stroke: color1,
+					'stroke-width': 3,
+				}).hide();
+			markers.push( marker );
+			chart.push( marker );
+			
+			path.click(function() {
+				_.each( markers, function(m) { m.hide() } );
+				marker.show();
+				value.attr('text', Math.round( items[i].value * 100 * 100 / total ) / 100 + '%');
+				label.attr('text', items[i].label);
+				var text = items[i].label, l = text.length - 3;
+				while( label.getBBox().width > r1 * 2 - 20 && l > 0 ) {
+					label.attr('text', text.substring(0, l--) + '...');
+				}
+			});
+			
+			// activate the largest by default
+			i == items.length - 1 && path.events[0].f();
 			
 			angle += delta;
 			chart.push( path );
