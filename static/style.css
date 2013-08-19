@@ -77,6 +77,7 @@
 	height: 40px;
 	margin: 4px 0;
 	background: #ccc;
+	border: 1px solid #fff;
 }
 
 
@@ -127,6 +128,7 @@
 	width: .75em;
 	height: .75em;
 	margin-right: .5em;
+	border: 1px solid #fff;
 }
 
 #newtransaction .category .radio {
@@ -265,6 +267,7 @@
 	width: 1em;
 	height: 1em;
 	margin-right: 1em;
+	border: 1px solid #fff;
 }
 
 #history .month .transaction .amount {
@@ -274,4 +277,42 @@
 
 #distribution .chart {
 	margin: 1em auto;
+}
+
+#distribution .datepicker {
+	float: right;
+}
+
+#distribution .categories {
+	clear: both;
+}
+
+#distribution .category {
+	font-weight: normal;
+	font-size: .8em;	
+	line-height: 2em;
+	height: 2em;
+
+}
+
+#distribution .category .color {
+	display: inline-block;
+	width: 1em;
+	height: 1em;
+	margin-right: 1em;
+	border: 1px solid #fff;
+}
+
+#distribution .category .amount {
+	float: right;
+	margin-right: 1em;
+	font-weight: lighter;
+}
+
+#distribution .category .percentage {
+	float: right;
+	width: 45px;
+	margin-left: .7em;
+	font-weight: bold;
+	text-align: right;
 }

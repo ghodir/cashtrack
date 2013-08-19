@@ -25,7 +25,16 @@
 		<script type="application/javascript" src="/static/lib/app.js"></script>
 		<script type="application/javascript" src="/static/lib/sift.js"></script>
 		<script type="application/javascript" src="/static/app.js"></script>
+		
 		<script type="application/javascript" src="/static/main.js"></script>
+		<script type="application/javascript" src="/static/app.entities.category.js"></script>
+		<script type="application/javascript" src="/static/app.entities.transaction.js"></script>
+		<script type="application/javascript" src="/static/app.overview.js"></script>
+		<script type="application/javascript" src="/static/app.transaction.new.js"></script>
+		<script type="application/javascript" src="/static/app.history.js"></script>
+		<script type="application/javascript" src="/static/app.budget.js"></script>
+		<script type="application/javascript" src="/static/app.distribution.js"></script>
+		<script type="application/javascript" src="/static/app.settings.js"></script>
 
 
 		<div id="home" class="app-page" data-page="home">
@@ -39,6 +48,9 @@
 					<li class="app-button" data-target="history"><span class="left">Verlauf</span><span class="right">&rsaquo;</span></li>
 					<li class="app-button" data-target="budget"><span class="left">Budget</span><span class="right">&rsaquo;</span></li>
 					<li class="app-button" data-target="distribution"><span class="left">Verteilung</span><span class="right">&rsaquo;</span></li>
+				</ul>
+				<ul class="app-section app-list">
+					<li class="app-button" data-target="settings"><span class="left">Einstellungen</span><span class="right">&rsaquo;</span></li>
 				</ul>
 			</div>
 		</div>
@@ -149,8 +161,11 @@
 				
 				</div>
 				<div class="app-section ">
-					<select class="category"></select>
-					<ul class="app-list">
+					<div class="datepicker">
+						<select class="months"></select>
+						<select class="years"></select>
+					</div>
+					<ul class="app-list categories">
 					
 					</ul>
 				</div>
@@ -158,7 +173,20 @@
 		</div>
 		
 		
+		<div id="settings" class="app-page" data-page="settings">
+			<div class="app-topbar">
+				<div class="app-button" data-back="true">Menü</div>
+				<div class="app-title">Einstellungen</div>
+				<div class="app-button right newtransaction" data-target="newtransaction">+</div>
+			</div>
+			<div class="app-content">
+				
+			</div>
+		</div>
+		
 		<script type="application/javascript">
+			Globalize.culture('de');
+			
 			try {
 				App.restore();
 			} catch( err ) {
