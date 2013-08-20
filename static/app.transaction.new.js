@@ -1,4 +1,27 @@
 App.populator('newtransaction', function(page, args) {
+
+	function save() {
+		var errors = {};
+		var transaction = CashTrack.request('transaction.create', {
+			amount: $(page).find('.amount').val(),
+			destination: $(page).find('.category.selected').data('category'),
+			date: $( page ).find('.date').data('date'),
+			notes: $( page ).find('.notes').val(),
+		});
+		
+		transaction.amount = Globalize.parseFloat(transaction.amount);
+		if( !transaction.amount ) {
+			transaction.amount = 0.0;
+		}
+		
+		if( !transaction.date ) {
+			transaction.date = new Date();
+			transaction.date.setHours(0, 0, 0, 0);
+		}
+			
+		CashTrack.request('transaction.update', transaction);
+		App.back();
+	}
 	
 	$(page).find('.back').on('click', function() {
 		App.back();
@@ -7,8 +30,9 @@ App.populator('newtransaction', function(page, args) {
 	$(page).on('keydown', function( e ) {
 		if( e.which == 27 )
 			App.back();
-		else if( e.which == 13 )
-			$(page).find('.save').trigger('click');
+		else if( e.which == 13 ) {
+			save();
+		}
 	});
 	
 	
@@ -34,36 +58,17 @@ App.populator('newtransaction', function(page, args) {
 					$a.val( Globalize.format( value, 'n2') );
 				
 				e.preventDefault();
+			} else if( !(48 <= e.which && e.which <= 58) && !( 96 <= e.which && e.which <= 106) ) {
+				e.preventDefault();
 			}
 		}).on('focus', function() {
 			this.selectionStart = this.selectionEnd = this.value.length;
 		}).on('mousedown', function( e ) {
 			$( this ).focus();
 			e.preventDefault();
-		});
-		
-	$(page).find('.save').on('click', function() {
-		var errors = {};
-		var transaction = CashTrack.request('transaction.create', {
-			amount: $(page).find('.amount').val(),
-			destination: $(page).find('.category.selected').data('category'),
-			date: $( page ).find('.date').data('date'),
-			notes: $( page ).find('.notes').val(),
-		});
-		
-		transaction.amount = Globalize.parseFloat(transaction.amount);
-		if( !transaction.amount ) {
-			transaction.amount = 0.0;
-		}
-		
-		if( !transaction.date ) {
-			transaction.date = new Date();
-			transaction.date.setHours(0, 0, 0, 0);
-		}
-			
-		CashTrack.request('transaction.update', transaction);
-		App.back();
-	});
+		}).focus();
+	
+	$(page).find('.save').on('click', save);
 	
 	$( page ).find('.amount').on('keyup', function() {
 		$( this ).removeClass( 'error' );

@@ -95,13 +95,16 @@
 
 #overview .category .bar {
 	display: block;
-	width: 0px;
 	height: 40px;
 	margin: 4px 0;
 	background: #ccc;
 	border: 1px solid #fff;
+	
+	transition: all .4s ease-out .5s;
+	-o-transition: width .4s ease-out .5s;
+	-moz-transition: width .4s ease-out .5s;
+	-webkit-transition: width .4s ease-out .5s;
 }
-
 
 #newtransaction .amount-wrapper {
 	text-align: right;

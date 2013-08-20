@@ -31,6 +31,8 @@
 			
 			var trans = CashTrack.request('transactions', category ? { destination: {$eq: category} } : null);
 			
+			trans = _.sortBy( trans, 'date').reverse();
+			
 			if( !trans.length )
 				return false;
 				

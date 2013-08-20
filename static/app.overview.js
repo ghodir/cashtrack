@@ -33,7 +33,7 @@ App.populator('overview', function(page, args) {
 		$( page ).find('.month').text( Globalize.format( start, 'MMMM') );
 		$( page ).find('.expenses').text( Globalize.format( sum, 'c' ) );
 		
-		var container = $(document.createDocumentFragment());
+		var container = $(page).find('.categories').empty();
 		for( var index in categories ) {
 			var category = categories[index];
 			var item = $(template[0].cloneNode(true));
@@ -41,14 +41,16 @@ App.populator('overview', function(page, args) {
 				item.addClass(category.color);
 				item.find('.name').text( category.name );
 				item.find('.amount').text( Globalize.format( amounts[ category.id ], 'c' ) );
-				
-				item.find('.bar').css({'background-color': category.color, 'border-color': darken( category.color, 50) });
-				item.find('.bar').anim({width: category.amount / max * 100.0 + '%'}, .4, 'ease-out');
-				
 				container.append( item );
+				
+				// Trigger page reflow ( taken from zepto )
+				item.size() && item.get(0).clientLeft
+				item.find('.bar').css({
+					'background-color': category.color,
+					'border-color': darken( category.color, 50),
+					'width': category.amount / max * 100.0 + '%'
+				});//.removeClass('empty');
 		}
-		
-		$(page).find('.categories').append( $(container) );
 	});
 	
 }, function(page, args) {
