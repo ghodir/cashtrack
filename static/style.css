@@ -7,6 +7,28 @@
 	margin-top: -3px;
 }
 
+.input {
+	position: relative;
+}
+
+.input.popup:after {
+	position: absolute;
+	display: inline-block;
+	height: 0;
+	content: " ";
+	width: 0;
+	bottom: 0;
+	right: 0;
+	border-bottom: 10px solid #0059bc;
+	border-left: 10px solid transparent;
+	opacity: .6;
+	z-index: 0;
+}
+
+.input.popup:hover:after {
+	opacity: .8;
+}
+
 #home .app-list li {
 	margin: 0;
 	padding: 2px 18px 2px 26px;
@@ -88,14 +110,15 @@
 }
 
 #newtransaction .amount {
-	display: inline-block;
-	width: 200px;
+	margin: 0;
+	float: left;
+	padding-right: 22px;
+	margin-right: -22px;
+	box-sizing: border-box;
 	text-align: right;
-	padding-right: 2px;
 	vertical-align: top;
 	height: auto;
 	line-height: normal;
-	margin: 0;
 	border-bottom: 0;
 	
 	font-weight: 100;
@@ -106,6 +129,7 @@
 }
 
 #newtransaction .amount-wrapper .add-on {
+	float: left;
 	display: inline-block;
 	height: 40px;
 	margin-left: -1px;
@@ -132,14 +156,29 @@
 }
 
 #newtransaction .category .radio {
+	position: relative;
 	float: right;
-	height: 43px;
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	border-radius: 8px;
+	border: 1px solid #aaa;
+	background: #eee;
 	line-height: 43px;
-	margin: 0;
+	margin: 12px 0;
 }
 
-#newtranscation .category.selected .radio {
-	
+#newtransaction .category .radio:before {
+	border: 1.2px solid #fff;
+	content: '';
+	width: 13px;
+	height: 13px;
+	position: absolute;
+	border-radius: 7px;
+}
+
+#newtransaction .category.selected .radio {
+	background: #09c;
 }
 
 #newtransaction .input {

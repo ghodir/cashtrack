@@ -9,8 +9,39 @@ App.populator('newtransaction', function(page, args) {
 			App.back();
 		else if( e.which == 13 )
 			$(page).find('.save').trigger('click');
-	}); 
+	});
 	
+	
+	$( page ).find('.amount')
+		.val(Globalize.format(0.0, 'n2'))
+		.on('keypress', function( e ) {
+			e = e || window.event;
+			var char = String.fromCharCode( e.which || e.keyCode );
+			
+			var $a = $( page ).find('.amount');
+			var value = $a.val() + char;
+				value = Globalize.parseFloat( value );
+				value *= 10;
+			$a.val( Globalize.format( value, 'n2' ) );
+			return false;
+		}).on('keydown', function(e) {
+			
+			if( e.which == 8 ) {
+				var $a = $( page ).find('.amount');
+				var value = $a.val();
+					value = Globalize.parseFloat( value );
+					value *= 0.1;
+					$a.val( Globalize.format( value, 'n2') );
+				
+				e.preventDefault();
+			}
+		}).on('focus', function() {
+			this.selectionStart = this.selectionEnd = this.value.length;
+		}).on('mousedown', function( e ) {
+			$( this ).focus();
+			e.preventDefault();
+		});
+		
 	$(page).find('.save').on('click', function() {
 		var errors = {};
 		var transaction = CashTrack.request('transaction.create', {
@@ -22,9 +53,7 @@ App.populator('newtransaction', function(page, args) {
 		
 		transaction.amount = Globalize.parseFloat(transaction.amount);
 		if( !transaction.amount ) {
-			var node = $( page ).find('.amount').addClass('error')[0];
-			var val = $( page ).find('.amount').addClass('error').val();
-			$( page ).find('.amount').addClass('error').focus();
+			transaction.amount = 0.0;
 		}
 		
 		if( !transaction.date ) {
@@ -39,23 +68,6 @@ App.populator('newtransaction', function(page, args) {
 	$( page ).find('.amount').on('keyup', function() {
 		$( this ).removeClass( 'error' );
 	});
-	
-	$( page ).on('appShow', function() {
-		var node = $( page ).find('.amount')[0];
-		var pos = $( page ).find('.amount').val().length;
-			
-		if( node.createTextRange ) {
-				var range = node.createTextRange();
-					range.collapse(true);
-					range.moveEnd( pos );
-					range.moveStart( pos );
-			}else if( node.setSelectionRange ) {
-				node.setSelectionRange( pos, pos );
-			} else {
-				$( page ).find('.amount').focus();
-			}
-	});
-	
 	
 	var container = $(document.createDocumentFragment());
 	var template = $(page).find('.categories .template').removeClass('template').remove();
@@ -72,10 +84,8 @@ App.populator('newtransaction', function(page, args) {
 			}
 			
 			item.on('click', function(e) {
-				$( page ).find('.categories .category.selected').removeClass('selected')
-						 .find('.radio').removeAttr('checked');
+				$( page ).find('.categories .category.selected').removeClass('selected');
 				$(this).addClass('selected');
-				$(this).find('.radio').attr('checked', 'true');
 			});
 	});
 	
