@@ -9,39 +9,28 @@ App.populator('newtransaction', function(page, args) {
 			App.back();
 		else if( e.which == 13 )
 			$(page).find('.save').trigger('click');
-			
 	}); 
 	
 	$(page).find('.save').on('click', function() {
 		var errors = {};
-		var transaction = CashTrack.request('transaction.create');
-			transaction.amount = $(page).find('.amount').val();
-			transaction.destination = $(page).find('.category.selected').data('category');
-			transaction.date = $( page ).find('.date').val();
-			transaction.notes = $( page ).find('.notes').val();
+		var transaction = CashTrack.request('transaction.create', {
+			amount: $(page).find('.amount').val(),
+			destination: $(page).find('.category.selected').data('category'),
+			date: $( page ).find('.date').data('date'),
+			notes: $( page ).find('.notes').val(),
+		});
 		
 		transaction.amount = Globalize.parseFloat(transaction.amount);
 		if( !transaction.amount ) {
 			var node = $( page ).find('.amount').addClass('error')[0];
 			var val = $( page ).find('.amount').addClass('error').val();
-			
-			if( node.createTextRange ) {
-				var range = node.createTextRange();
-					range.collapse(true);
-					range.moveEnd( val.length );
-					range.moveStart( val.length );
-			}else if( node.setSelectionRange ) {
-				node.setSelectionRange( val.length, val.length );
-			} else {
-				$( page ).find('.amount').addClass('error').focus();
-			}
-			
-			return;
+			$( page ).find('.amount').addClass('error').focus();
 		}
 		
-		switch( transaction.date ) {
-			case 'Heute': transaction.date = new Date(); break;
-		};
+		if( !transaction.date ) {
+			transaction.date = new Date();
+			transaction.date.setHours(0, 0, 0, 0);
+		}
 			
 		CashTrack.request('transaction.update', transaction);
 		App.back();
@@ -92,6 +81,57 @@ App.populator('newtransaction', function(page, args) {
 	
 	$(page).find('.categories').append( $(container) );
 	
+	$( page ).find('.date').data('date', (new Date()).setHours(0, 0, 0, 0)).val('Heute');
+	$( page ).find('.date').pickadate({
+		today: 'Heute',
+		clear: 'Abbrechen',
+		format: Globalize.culture().calendars.standard.patterns.d.toLowerCase(),
+		monthsFull: Globalize.culture().calendars.standard.months.names,
+		weekdaysShort: Globalize.culture().calendars.standard.days.namesShort,
+		container: $( page ),
+		onSet: function( e ) {
+			var date;
+			if( e.hasOwnProperty( 'clear' ) )
+				date = $( page ).find('.date').data('date');
+			else
+				date = new Date( e.select || e.highlight.obj );
+				
+			var	today = new Date(),
+				yesterday = new Date();
+			
+			date.setHours(0, 0, 0, 0); today.setHours(0, 0, 0, 0); yesterday.setHours(0, 0, 0, 0);
+			yesterday.setDate( yesterday.getDate() - 1 );
+			
+			if( date.getTime() == today.getTime() )
+				$( page ).find('.date').val('Heute');
+			else if( date.getTime() == yesterday.getTime() ) {
+				$( page ).find('.date').val('Gestern');
+			} else {
+				$( page ).find('.date').val( Globalize.format( date, 'd'));
+			}
+			
+			$( page ).find('.date').data('date', date);
+		},
+		onRender: function() {
+			var today = new Date();
+				today.setHours(0, 0, 0, 0);
+			
+			var yesterday = new Date();
+				yesterday.setHours(0, 0, 0, 0);
+				yesterday.setDate( yesterday.getDate() - 1 );
+			
+			var $clear = this.$root.find('.picker__button--clear');
+			var $today = this.$root.find('.picker__button--today');
+			var $yesterday = $today.clone();
+			
+			$clear.after( $yesterday );
+			$yesterday.after( $today );
+			
+			$today.attr('data-pick', today.getTime() ).text('Heute');
+			$yesterday.attr('data-pick', yesterday.getTime() ).text('Gestern');
+		}
+	});
+		
 }, function(page, args) {
 
 });

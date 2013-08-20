@@ -11,6 +11,8 @@
 		<link href='/static/fonts/roboto.css' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="/static/default.css" />
 		<link rel="stylesheet" href="/static/style.css" />
+		<link rel="stylesheet" href="/static/lib/picker.default.css" />
+		<link rel="stylesheet" href="/static/lib/picker.default.date.css" />
 		<style type="text/css">
 			
 		</style>
@@ -19,7 +21,9 @@
 		<script type="application/javascript" src="/static/lib/underscore.js"></script>
 		<script type="application/javascript" src="/static/lib/globalize.js"></script>
 		<script type="application/javascript" src="/static/lib/globalize.culture.de.js"></script>
-		<script type="application/javascript" src="/static/lib/zepto.js"></script>
+		<script type="application/javascript" src="/static/lib/jquery.js"></script>
+		<script type="application/javascript" src="/static/lib/picker.js"></script>
+		<script type="application/javascript" src="/static/lib/picker.date.js"></script>
 		<script type="application/javascript" src="/static/lib/raphael.js"></script>
 		<script type="application/javascript" src="/static/raphael.chart.js"></script>
 		<script type="application/javascript" src="/static/lib/app.js"></script>
@@ -94,7 +98,7 @@
 			<div class="app-content">
 				<div class="app-section">
 					<div class="amount-wrapper">
-						<input class="app-input amount" type="text" value="0,00" /><span class="add-on">€</span>
+						<input class="app-input amount" type="number" value="0,00" /><span class="add-on">€</span>
 					</div>
 				</div>
 				<ul class="app-list app-section categories" size="5">
@@ -107,7 +111,7 @@
 				<div class="app-section further" >
 					<div class="input">
 						<label for="date">Datum:</label>
-						<input class="app-input date" value="Heute" name="date" type="text"/>
+						<input class="app-input date" />
 					</div>
 					<div class="input">
 						<label for="notes">Notizen:</label>

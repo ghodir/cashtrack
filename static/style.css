@@ -144,23 +144,38 @@
 
 #newtransaction .input {
 	margin: 0 18px;
+	padding-left: 8px;
 }
 
 #newtransaction .input label {
 	width: 100px;
+	margin-right: -100px;
 	height: 20px;
+	line-height: 20px;
 	padding: 10px 0;
 	display: inline-block;
+	float: left;
 }
 
 #newtransaction .input input {
-	width: auto;
+	width: 100%;
+	box-sizing: border-box;
+	padding-left: 100px;
 	display: inline-block;
 	border-bottom: 1px solid #eee;
 }
 
 #newtransaction .input:last-child input {
 	border-bottom: 0;
+}
+
+#newtransaction .input .date {
+	text-align: right;
+}
+
+#newtransaction .picker__button--today, 
+#newtransaction .picker__button--clear {
+	width: 33%;
 }
 
 #history select.category {
