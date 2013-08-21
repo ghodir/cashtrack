@@ -28,7 +28,7 @@
 		return new Transaction( data );
 	});
 	
-	CashTrack.reqres.setHandler('transaction.update', function( transaction ) {
+	CashTrack.reqres.setHandler('transaction.save', function( transaction ) {
 		if( !transaction.id ) {
 			transaction.id = ++id;
 			localStorage['transactions_id'] = id;
@@ -37,9 +37,9 @@
 		transactions.push( transaction );
 		localStorage['transactions'] = JSON.stringify( transactions );
 	});
-	
 	CashTrack.reqres.setHandler('transaction.remove', function( transaction ) {
-		var index = transaction.indexOf( transaction );
+	
+		var index = transactions.indexOf( transaction );
 		if( ~index ) {
 			delete transactions[ index ];
 			localStorage['transactions'] = JSON.stringify( transactions );

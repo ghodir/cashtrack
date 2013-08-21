@@ -63,6 +63,10 @@
 					$item.append( $('<span>').addClass('amount').text( Globalize.format( transaction.amount, 'c' ) ) );
 					
 					$item.appendTo( $container );
+					
+					$item.on('click', function() {
+						App.load('transaction', {id: transaction.id } );
+					});
 			});
 			
 			var $header = $('<div>').addClass('header');
