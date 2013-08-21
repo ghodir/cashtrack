@@ -1,4 +1,25 @@
+
+var deferred = $.Deferred();
+	
 CashTrack = new Application();
+CashTrack.db = {};
+CashTrack.db.ready = deferred.promise();
+
+CashTrack.on('start:before', function() {	
+	var request = window.indexedDB.open('cashtrack', 1);
+		request.onerror = function( event ) {
+			console.log( event.target.errorCode );
+			deferred.reject( this.errorCode );
+		}
+		request.onsuccess = function( event ) {
+			deferred.resolveWith( this, [event.target.result,] );
+		}
+		request.onupgradeneeded = function( event ) {
+			var db = event.target.result;
+			
+			CashTrack.trigger('db:upgrade', db);
+		}
+});
 	
 	
 function colorLuminance(hex, lum) {

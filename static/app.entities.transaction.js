@@ -17,48 +17,54 @@
 	
 	var id = localStorage['transactions_id'] || 0;
 	
-	var db = $.Deferred();
-		db.ready = db.promise();
-	var request = window.indexedDB.open('cashtrack', 1);
-		request.onerror = function( event ) {
-			console.log( event.target.errorCode );
-		}
-		request.onsuccess = function( event ) {
-			db.resolve( event.target.result );
+	
+	CashTrack.on('db:upgrade', function( db ) {
+		var objectStore = db.createObjectStore('transactions', {keyPath: 'id', autoIncrement: true});
+			objectStore.createIndex('date', 'date', {unique: false});
 			
-			var transaction = db.transaction(['transactions'], 'readwrite');
-			var objectStore = transaction.objectStore('transactions');
-			/*
-			_.each( transactions, function(t) {
-				if( !t )
-					return;
-					
-				delete t.id;
+		var transaction = db.transaction(['transactions'], 'readwrite');
+		var objectStore = transaction.objectStore('transactions');
+		_.each( transactions, function(t) {
+			if( !t )
+				return;
 				
-				var request = objectStore.add( t );
-					request.onsuccess = function(e) {
-						console.log( e.target.result );
-					}
-					request.onerror = function(e ) {
-						console.log( e );
-					}
-			});
-			*/
-		}
-		request.onupgradeneeded = function( event ) {
-			db = event.target.result;
+			delete t.id;
 			
-			var objectStore = db.createObjectStore('transactions', {keyPath: 'id', autoIncrement: true});
-				objectStore.createIndex('date', 'date', {unique: false});
-		}
-
+			var request = objectStore.add( t );
+				request.onsuccess = function(e) {
+					console.log( e.target.result );
+				}
+				request.onerror = function(e ) {
+					console.log( e );
+				}
+		});
+	});
+	
 	CashTrack.reqres.setHandler('transactions', function( query ) {
-		$.when( db.ready )
-		 .then( function() {
-			var transaction = db.transaction(['transactions'], 'read');
-			var objectStore = transaction.objectStore('transactions');
+		var d = $.Deferred();
+		
+		$.when( CashTrack.db.ready )
+		 .then( function( db ) {
+			var store = db.transaction(
+								['transactions'],
+								'readonly'
+							)
+							.objectStore('transactions');
 			
-		 })
+			var documents = [];
+			store.openCursor().onsuccess = function( e ) {
+				var cursor = e.target.result;
+				if( cursor ) {
+					documents.push( cursor.value );
+					cursor.continue();
+				} else {
+					d.resolve(documents);
+				}
+			}
+			
+		 });
+		 
+		return d.promise();
 		return !query ? transactions : sift(query, transactions);
 	});
 	
@@ -89,4 +95,11 @@
 			localStorage['transactions'] = JSON.stringify( transactions );
 		}
 	});
+
 })(CashTrack);
+
+
+$.when( CashTrack.request('transactions') )
+ .then( function( transactions) {
+	console.log( transactions );
+ });
