@@ -2,11 +2,14 @@
 	var Transaction = function( data ) {
 		_.extend(this, data);
 	};
-
+	
 	var transactions = [];
 	if( localStorage['transactions'] ) {
 		transactions = JSON.parse( localStorage['transactions'] );
 		_.map(transactions, function( t ) {
+			if( !t )
+				return;
+				
 			t.date = new Date( t.date );
 			return t;
 		});
@@ -14,7 +17,48 @@
 	
 	var id = localStorage['transactions_id'] || 0;
 	
+	var db = $.Deferred();
+		db.ready = db.promise();
+	var request = window.indexedDB.open('cashtrack', 1);
+		request.onerror = function( event ) {
+			console.log( event.target.errorCode );
+		}
+		request.onsuccess = function( event ) {
+			db.resolve( event.target.result );
+			
+			var transaction = db.transaction(['transactions'], 'readwrite');
+			var objectStore = transaction.objectStore('transactions');
+			/*
+			_.each( transactions, function(t) {
+				if( !t )
+					return;
+					
+				delete t.id;
+				
+				var request = objectStore.add( t );
+					request.onsuccess = function(e) {
+						console.log( e.target.result );
+					}
+					request.onerror = function(e ) {
+						console.log( e );
+					}
+			});
+			*/
+		}
+		request.onupgradeneeded = function( event ) {
+			db = event.target.result;
+			
+			var objectStore = db.createObjectStore('transactions', {keyPath: 'id', autoIncrement: true});
+				objectStore.createIndex('date', 'date', {unique: false});
+		}
+
 	CashTrack.reqres.setHandler('transactions', function( query ) {
+		$.when( db.ready )
+		 .then( function() {
+			var transaction = db.transaction(['transactions'], 'read');
+			var objectStore = transaction.objectStore('transactions');
+			
+		 })
 		return !query ? transactions : sift(query, transactions);
 	});
 	
