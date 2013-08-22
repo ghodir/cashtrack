@@ -10,14 +10,14 @@ CashTrack.on('start:before', function() {
 		request.onerror = function( event ) {
 			console.log( event.target.errorCode );
 			deferred.reject( this.errorCode );
-		}
+			CashTrack.trigger('db:error', event.target);
+		};
 		request.onsuccess = function( event ) {
 			deferred.resolveWith( this, [event.target.result,] );
+			CashTrack.trigger('db:open', event.target.result);
 		}
 		request.onupgradeneeded = function( event ) {
-			var db = event.target.result;
-			
-			CashTrack.trigger('db:upgrade', db);
+			CashTrack.trigger('db:upgrade', event.target.result);
 		}
 });
 	

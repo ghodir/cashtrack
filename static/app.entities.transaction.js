@@ -21,23 +21,23 @@
 	CashTrack.on('db:upgrade', function( db ) {
 		var objectStore = db.createObjectStore('transactions', {keyPath: 'id', autoIncrement: true});
 			objectStore.createIndex('date', 'date', {unique: false});
-			
-		var transaction = db.transaction(['transactions'], 'readwrite');
-		var objectStore = transaction.objectStore('transactions');
-		_.each( transactions, function(t) {
-			if( !t )
-				return;
+		
+		CashTrack.once('db:open', function() {
+			var transaction = db.transaction(['transactions'], 'readwrite');
+			var objectStore = transaction.objectStore('transactions');
+			_.each( transactions, function(t) {
+				if( !t )
+					return;
+					
+				delete t.id;
 				
-			delete t.id;
-			
-			var request = objectStore.add( t );
-				request.onsuccess = function(e) {
-					console.log( e.target.result );
-				}
-				request.onerror = function(e ) {
-					console.log( e );
-				}
+				var request = objectStore.add( t );
+					request.onerror = function(e ) {
+						CashTrack.trigger('error:db', 'Failed to migrate transactions to new database version.');
+					}
+			});
 		});
+		
 	});
 	
 	CashTrack.reqres.setHandler('transactions', function( query ) {

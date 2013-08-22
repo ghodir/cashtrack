@@ -15,7 +15,27 @@
 		localStorage['categories'] = JSON.stringify( categories );
 	}
 	
-	var id = localStorage['category_id'] || 0
+	var id = localStorage['category_id'] || 0;
+	
+	CashTrack.on('db:upgrade', function( db ) {
+		var objectStore = db.createObjectStore('categories', {keyPath: 'id', autoIncrement: true});
+		
+		CashTrack.once('db:open', function(db) {
+			var transaction = db.transaction(['categories'], 'readwrite');
+			var objectStore = transaction.objectStore('categories');
+			_.each( categories, function(c) {
+				if( !c )
+					return;
+					
+				delete c.id;
+				
+				var request = objectStore.add( c );
+					request.onerror = function(e ) {
+						CashTrack.trigger('error:db', 'Failed to migrate categories to new database version.');
+					}
+			});
+		});
+	});
 			
 	CashTrack.reqres.setHandler('categories', function(query, start, end) {
 		var r = _.isEmpty(query) ? categories : sift(query, categories);
