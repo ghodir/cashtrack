@@ -9,12 +9,12 @@ CashTrack.on('start:before', function() {
 	var request = window.indexedDB.open('cashtrack', 1);
 		request.onerror = function( event ) {
 			console.log( event.target.errorCode );
-			deferred.reject( this.errorCode );
 			CashTrack.trigger('db:error', event.target);
+			deferred.reject( this.errorCode );
 		};
 		request.onsuccess = function( event ) {
-			deferred.resolveWith( this, [event.target.result,] );
 			CashTrack.trigger('db:open', event.target.result);
+			deferred.resolveWith( this, [event.target.result,] );
 		}
 		request.onupgradeneeded = function( event ) {
 			CashTrack.trigger('db:upgrade', event.target.result);

@@ -21,6 +21,8 @@
 	CashTrack.on('db:upgrade', function( db ) {
 		var objectStore = db.createObjectStore('transactions', {keyPath: 'id', autoIncrement: true});
 			objectStore.createIndex('date', 'date', {unique: false});
+			objectStore.createIndex('destination', 'destination', {unique: false});
+			objectStore.createIndex('destination-date', ['destination', 'date'], {unique: false});
 		
 		CashTrack.once('db:open', function() {
 			var transaction = db.transaction(['transactions'], 'readwrite');
@@ -30,6 +32,7 @@
 					return;
 					
 				delete t.id;
+				t.destination = parseInt( t.destination );
 				
 				var request = objectStore.add( t );
 					request.onerror = function(e ) {
@@ -40,6 +43,7 @@
 		
 	});
 	
+	// Query by months in the past, destination, time range
 	CashTrack.reqres.setHandler('transactions', function( query ) {
 		var d = $.Deferred();
 		
@@ -97,9 +101,3 @@
 	});
 
 })(CashTrack);
-
-
-$.when( CashTrack.request('transactions') )
- .then( function( transactions) {
-	console.log( transactions );
- });

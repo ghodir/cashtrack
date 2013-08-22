@@ -3,7 +3,7 @@ App.populator('overview', function(page, args) {
 	
 	$( page ).on('appShow', function() {
 		$(page).find('.categories').empty();
-		
+		/*
 		var now = new Date(), y = now.getFullYear(), m = now.getMonth();
 		var start = new Date(y, m, 1);
 		var end   = new Date(y, m + 1, 0);
@@ -32,25 +32,34 @@ App.populator('overview', function(page, args) {
 		categories = _.sortBy( categories, 'amount').reverse();
 		$( page ).find('.month').text( Globalize.format( start, 'MMMM') );
 		$( page ).find('.expenses').text( Globalize.format( sum, 'c' ) );
-		
+		*/
 		var container = $(page).find('.categories').empty();
-		for( var index in categories ) {
-			var category = categories[index];
-			var item = $(template[0].cloneNode(true));
-				item.data('category', category.id );
-				item.addClass(category.color);
-				item.find('.name').text( category.name );
-				item.find('.amount').text( Globalize.format( amounts[ category.id ], 'c' ) );
-				container.append( item );
+		$.when( CashTrack.request('categories', null, 0) )
+		 .then( function( categories ) {
+			var max = 0;
+			categories.sortBy('amount').reverse().each(function( category ) {
+				if( category.amount > max )
+					max = category.amount;
+			});
+			
+			categories.each(function( category ) {
 				
-				// Trigger page reflow ( taken from zepto )
-				item.size() && item.get(0).clientLeft
-				item.find('.bar').css({
-					'background-color': category.color,
-					'border-color': darken( category.color, 50),
-					'width': category.amount / max * 100.0 + '%'
-				});//.removeClass('empty');
-		}
+				var item = $(template[0].cloneNode(true));
+					item.data('category', category.id );
+					item.addClass(category.color);
+					item.find('.name').text( category.name );
+					item.find('.amount').text( Globalize.format( category.amount, 'c' ) );
+					container.append( item );
+					
+					// Trigger page reflow ( taken from zepto )
+					item.size() && item.get(0).clientLeft
+					item.find('.bar').css({
+						'background-color': category.color,
+						'border-color': darken( category.color, 50),
+						'width': category.amount / max * 100.0 + '%'
+					});
+			});
+		 });
 	});
 	
 }, function(page, args) {

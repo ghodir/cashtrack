@@ -299,5 +299,45 @@
 	
 	
 	_.extend( Application.prototype, Events);
+	
+	
+	var Model = Application.Model = function( data ) {
+		_.extend( this, data );
+	};
+	
+	Model.extend = extend;
+	
+	var Collection = Application.Collection = function() {
+		this._reset();
+		this.initialize.apply(this, arguments);
+	}
+	
+	_.extend(Collection.prototype, {
+		initialize: function() {},
+		each: function( cb, context) {
+			_.each( this.models, cb, context);
+			return this;
+		},
+		push: function( model ) {
+			this.models.push( model );
+			this.length++;
+			return this;
+		},
+		sortBy: function( iterator ) {
+			this.models = _.sortBy( this.models, iterator);
+			return this;
+		},
+		reverse: function() {
+			this.models = this.models.reverse();
+			return this;
+		},
+		_reset: function() {
+			this.models = [];
+			this.length = 0;
+		}
+	});
+	
+	Collection.extend = extend;
+	
   
 }).call(this);
