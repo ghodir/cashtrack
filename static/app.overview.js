@@ -10,21 +10,21 @@ App.populator('overview', function(page, args) {
 			$( page ).find('.month').text( Globalize.format( new Date(), 'MMMM') );
 			$( page ).find('.expenses').text( Globalize.format( categories.sum, 'c' ) );
 		
-			categories.sortBy('amount').reverse().each(function( category, index, list) {
+			categories.sortBy('amount').reverse().forEach(function( category, index, list) {
 				
 				var item = $(template[0].cloneNode(true));
-					item.data('category', category.id );
-					item.addClass(category.color);
-					item.find('.name').text( category.name );
-					item.find('.amount').text( Globalize.format( category.amount, 'c' ) );
+					item.data('category', category.get('id') );
+					item.addClass(category.get('color'));
+					item.find('.name').text( category.get('name') );
+					item.find('.amount').text( Globalize.format( category.get('amount'), 'c' ) );
 					container.append( item );
 					
 					// Trigger page reflow ( taken from zepto )
 					item.size() && item.get(0).clientLeft
 					item.find('.bar').css({
-						'background-color': category.color,
-						'border-color': darken( category.color, 50),
-						'width': category.amount / list[0].amount * 100.0 + '%'
+						'background-color': category.get('color'),
+						'border-color': darken( category.get('color'), 50),
+						'width': category.get('amount') / list[0].get('amount') * 100.0 + '%'
 					});
 			});
 		 });

@@ -40,14 +40,23 @@
 	
 	
 	var Category = Backbone.Model.extend({
-
+		initialize: function() {
+			this.set('amount', 0.0);
+			this.on('change:transactions', function(model, transactions) {
+				this.set('amount', transactions.sum);
+			});
+		}
 	});
 	
 	var Categories = Backbone.Collection.extend({
 		initialize: function() {
 			this.sum = 0.0;
 			this.on('add', function( model ) {
-				this.sum += model.amount;
+				this.sum += model.get('amount');
+				this.listenTo(model, 'change:amount', function(model) {
+					this.sum -= model.previous('amount');
+					this.sum += model.get('amount');
+				});
 			});
 		}
 	});
@@ -60,43 +69,32 @@
 			var transaction = db.transaction( 'categories', 'readonly');
 			var categories = transaction.objectStore('categories');
 			
+			var promises = [];
 			var documents = new Categories();
+			
 			categories.openCursor().onsuccess = function( e ) {
 				var cursor = e.target.result;
 				if( cursor ) {
 					var category = new Category( cursor.value );
+					documents.push( category );
 					
 					if( _.isNumber( month ) ) {
 						var d = $.Deferred();
-						documents.push( d.promise() );
+						promises.push( d.promise() );
 						
 						$.when( CashTrack.request('transactions', category.id, month) )
 						 .then( function( transactions ) {
-							category.transactions = transactions;
-							category.amount = transactions.sum;
-							sum += transactions.sum;
+							category.set('transactions', transactions);
 							d.resolve( category );
 						 });
-					} else {
-						deferred.notify( category );
-						documents.push( category );
 					}
 					
 					cursor.continue();
 				} else {
-					if( _.isNumber(month) )
-						$.when.apply($, documents.models)
-						 .then(function() {
-							var documents = new Categories();
-								documents.sum = 0.0;
-							for( var i in arguments ) {
-								documents.push( arguments[i] );
-								documents.sum += arguments[i].transactions.sum;
-							}
-							deferred.resolve( documents );
-						 });
-					else
-						deferred.resolve(documents);
+					$.when.apply($, promises)
+					 .then(function() {
+						deferred.resolve( documents );
+					 });
 				}
 			}
 		 });

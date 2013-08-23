@@ -44,7 +44,7 @@
 		initialize: function() {
 			this.sum = 0.0;
 			this.on('add', function( model ) {
-				this.sum += model.amount;
+				this.sum += model.get('amount');
 			});
 		}
 	});
@@ -66,7 +66,6 @@
 			var transaction = db.transaction('transactions', 'readonly' );
 			
 			var documents = new Transactions();
-				documents.sum = 0.0;
 			var range = IDBKeyRange.bound( [category, start], [category, end] );
 			var index = transaction.objectStore('transactions').index('destination-date');
 				index.openCursor( range ).onsuccess = function( event ) {
@@ -74,7 +73,6 @@
 					if( cursor ) {
 						var transaction = new Transaction( cursor.value );
 						documents.push( transaction );
-						documents.sum += transaction.amount;
 						cursor.continue();
 					} else {
 						d.resolve( documents );
