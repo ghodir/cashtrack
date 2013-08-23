@@ -1,8 +1,4 @@
-(function() {
-	var Transaction = function( data ) {
-		_.extend(this, data);
-	};
-	
+(function() {	
 	var transactions = [];
 	if( localStorage['transactions'] ) {
 		transactions = JSON.parse( localStorage['transactions'] );
@@ -43,33 +39,49 @@
 		
 	});
 	
+	var Transaction = Backbone.Model.extend({});
+	var Transactions = Backbone.Collection.extend({
+		initialize: function() {
+			this.sum = 0.0;
+			this.on('add', function( model ) {
+				this.sum += model.amount;
+			});
+		}
+	});
+	
 	// Query by months in the past, destination, time range
-	CashTrack.reqres.setHandler('transactions', function( query ) {
-		var d = $.Deferred();
+	CashTrack.reqres.setHandler('transactions', function( category, month ) {
+		var d = $.Deferred(), start, end;
 		
+		category || ( category = '');
+		
+		if( _.isNumber( month ) ) {
+			now = new Date(), y = now.getFullYear(), m = now.getMonth() - month;
+			start = new Date(y, m, 1);
+			end = new Date(y, m + 1, 1);
+		}
+			
 		$.when( CashTrack.db.ready )
 		 .then( function( db ) {
-			var store = db.transaction(
-								['transactions'],
-								'readonly'
-							)
-							.objectStore('transactions');
+			var transaction = db.transaction('transactions', 'readonly' );
 			
-			var documents = [];
-			store.openCursor().onsuccess = function( e ) {
-				var cursor = e.target.result;
-				if( cursor ) {
-					documents.push( cursor.value );
-					cursor.continue();
-				} else {
-					d.resolve(documents);
+			var documents = new Transactions();
+				documents.sum = 0.0;
+			var range = IDBKeyRange.bound( [category, start], [category, end] );
+			var index = transaction.objectStore('transactions').index('destination-date');
+				index.openCursor( range ).onsuccess = function( event ) {
+					var cursor = event.target.result;
+					if( cursor ) {
+						var transaction = new Transaction( cursor.value );
+						documents.push( transaction );
+						documents.sum += transaction.amount;
+						cursor.continue();
+					} else {
+						d.resolve( documents );
+					}
 				}
-			}
-			
 		 });
-		 
 		return d.promise();
-		return !query ? transactions : sift(query, transactions);
 	});
 	
 	CashTrack.reqres.setHandler('transaction', function(id) {

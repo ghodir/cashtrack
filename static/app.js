@@ -307,8 +307,13 @@
 	
 	Model.extend = extend;
 	
-	var Collection = Application.Collection = function() {
+	var Collection = Application.Collection = function( options ) {
 		this._reset();
+		if( _.isArray( options ) ) {
+			_.each(options, function( element ) {
+				this.push( element );
+			}, this);
+		}
 		this.initialize.apply(this, arguments);
 	}
 	
@@ -320,6 +325,7 @@
 		},
 		push: function( model ) {
 			this.models.push( model );
+			this._byID[ model.id ] = model;
 			this.length++;
 			return this;
 		},
@@ -331,9 +337,14 @@
 			this.models = this.models.reverse();
 			return this;
 		},
+		get: function( id ) {
+			return this._byID[ id ];
+		},
 		_reset: function() {
+			this.sum = 0.0;
 			this.models = [];
 			this.length = 0;
+			this._byID = {};
 		}
 	});
 	

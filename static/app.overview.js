@@ -5,7 +5,7 @@ App.populator('overview', function(page, args) {
 		$(page).find('.categories').empty();
 		
 		var container = $(page).find('.categories').empty();
-		$.when( CashTrack.request('categories', null, 0) )
+		$.when( CashTrack.request('categories', 0) )
 		 .then( function( categories ) {
 			$( page ).find('.month').text( Globalize.format( new Date(), 'MMMM') );
 			$( page ).find('.expenses').text( Globalize.format( categories.sum, 'c' ) );

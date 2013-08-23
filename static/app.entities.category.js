@@ -39,88 +39,64 @@
 	});
 	
 	
-	var Category = Application.Model.extend('Category', {
+	var Category = Backbone.Model.extend({
 
 	});
 	
-	var Categories = Application.Collection.extend('Categories', {
-	
+	var Categories = Backbone.Collection.extend({
+		initialize: function() {
+			this.sum = 0.0;
+			this.on('add', function( model ) {
+				this.sum += model.amount;
+			});
+		}
 	});
 			
-	CashTrack.reqres.setHandler('categories', function(query, start, end) {
+	CashTrack.reqres.setHandler('categories', function(month) {
 		var deferred = $.Deferred();
-		
-		if( _.isNumber( start ) ) {
-			var months = start;
-			start = new Date();
-			start.setHours(0, 0, 0, 0);
-			start.setMonth( start.getMonth() - months, 1 );
-		} else if( _.isDate( start ) ) {
-			
-		} else {
-			start = '';
-		}
-		
-		if( _.isNumber( end ) ) {
-			var months = end;
-			start = new Date();
-			start.setHours(0, 0, 0, 0);
-			start.setDate( start.getDate() - end );
-		} else if( _.isDate( end ) ) {
-			
-		} else {
-			end	= new Date();
-		}
 		
 		$.when( CashTrack.db.ready )
 		 .then( function( db ) {
-			var transaction;
-			if( start || end ) 
-				transaction = db.transaction( ['transactions', 'categories'], 'readonly');
-			else
-				transaction = db.transaction( 'categories', 'readonly');
-			
+			var transaction = db.transaction( 'categories', 'readonly');
 			var categories = transaction.objectStore('categories');
 			
-			var sum = 0.0;
 			var documents = new Categories();
 			categories.openCursor().onsuccess = function( e ) {
 				var cursor = e.target.result;
 				if( cursor ) {
 					var category = new Category( cursor.value );
 					
-					if( start || end ) {
-						var range;
+					if( _.isNumber( month ) ) {
+						var d = $.Deferred();
+						documents.push( d.promise() );
 						
-						category.amount = 0.0;
-						category.transactions = [];
-						
-						range = IDBKeyRange.only( category.id );
-						
-						var index = transaction.objectStore('transactions').index('destination');
-							index.openCursor( range ).onsuccess = function( event ) {
-								var cursor2 = event.target.result;
-								if( cursor2 ) {
-									var transaction = cursor2.value;
-									category.amount += transaction.amount;
-									category.transactions.push( transaction);
-									cursor2.continue();
-								} else {
-									sum += category.amount;
-									deferred.notify( category );
-									documents.push( category );
-									cursor.continue();
-								}
-							}
+						$.when( CashTrack.request('transactions', category.id, month) )
+						 .then( function( transactions ) {
+							category.transactions = transactions;
+							category.amount = transactions.sum;
+							sum += transactions.sum;
+							d.resolve( category );
+						 });
 					} else {
 						deferred.notify( category );
 						documents.push( category );
-						cursor.continue();
 					}
+					
+					cursor.continue();
 				} else {
-					if( start || end )
-						documents.sum = sum;
-					deferred.resolve(documents);
+					if( _.isNumber(month) )
+						$.when.apply($, documents.models)
+						 .then(function() {
+							var documents = new Categories();
+								documents.sum = 0.0;
+							for( var i in arguments ) {
+								documents.push( arguments[i] );
+								documents.sum += arguments[i].transactions.sum;
+							}
+							deferred.resolve( documents );
+						 });
+					else
+						deferred.resolve(documents);
 				}
 			}
 		 });

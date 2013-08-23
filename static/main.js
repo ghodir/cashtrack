@@ -73,3 +73,10 @@ window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.ms
 
 if( !window.indexedDB )
 	alert('Your browser doesn\'t support a stable version of indexedDB');
+
+	
+_.templateSettings = {
+    evaluate:    /\{\{=(.+?)\}\}/g,
+    interpolate: /\{\{(.+?)\}\}/g,
+    escape:      /\{\{-(.+?)\}\}/g
+};
