@@ -76,7 +76,7 @@ if( !window.indexedDB )
 
 	
 _.templateSettings = {
-    evaluate:    /\{\{=(.+?)\}\}/g,
+    evaluate:    /\{%(.+?)%\}/g,
     interpolate: /\{\{(.+?)\}\}/g,
-    escape:      /\{\{-(.+?)\}\}/g
+    escape:      /\{\{=(.+?)\}\}/g
 };
