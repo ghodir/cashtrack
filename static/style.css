@@ -106,13 +106,19 @@
 	-webkit-transition: width .4s ease-out .5s;
 }
 
-#transaction .amount-wrapper {
+#transaction .amount {
 	text-align: right;
-	margin: 0 18px;
 	font-size: 2em;
+	padding-right: 6px;
 }
 
-#transaction .amount {
+#transaction .amount:after {
+	content: ' ';
+	clear: both;
+	display: table;
+}
+
+#transaction .amount .value{
 	margin: 0;
 	float: left;
 	padding-right: 22px;
@@ -131,7 +137,7 @@
 	color: #cc0000;
 }
 
-#transaction .amount-wrapper .add-on {
+#transaction .input .add-on {
 	float: left;
 	display: inline-block;
 	height: 40px;
@@ -211,7 +217,7 @@
 	border-bottom: 0;
 }
 
-#transaction .input .date {
+#transaction .input.date .value{
 	text-align: right;
 }
 

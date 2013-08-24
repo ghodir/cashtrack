@@ -40,7 +40,18 @@
 	});
 	
 	CashTrack.entities || ( CashTrack.entities = {} );
-	var Transaction = CashTrack.entities.Transaction = Backbone.Model.extend({});
+	var Transaction = CashTrack.entities.Transaction = Backbone.Model.extend({
+		defaults: {
+			id: null,
+			amount: 0.00,
+			destination: null,
+			date: null,
+			notes: '',
+		},
+		sync: function(method, model, options) {
+		
+		}
+	});
 	var Transactions = CashTrack.entities.Transactions = Backbone.Collection.extend({
 		initialize: function( models, options ) {
 			this.sum = 0.0;
@@ -106,26 +117,68 @@
 	});
 	
 	CashTrack.reqres.setHandler('transaction', function(id) {
-		return _.find( transactions, function( transaction ) {
-			return transaction.id == id;
-		});
+		var d = $.Deferred();
+		
+		$.when( CashTrack.db.ready )
+		 .then( function(db) {
+			var transaction = db.transaction('transactions', 'readonly' );
+			var store = transaction.objectStore('transactions');
+				store.get( id ).onsuccess = function() {
+					d.resolve( new Transaction( this.result ) );
+				}
+		 });
+		
+		return d.promise();
 	});
 	
 	CashTrack.reqres.setHandler('transaction.create', function( data ) {
-		return new Transaction( data );
+		var d = $.Deferred();
+		var t = new Transaction( data );
+			t.set('date', new Date());
+			d.resolve( t );
+		return d.promise();
 	});
 	
 	CashTrack.reqres.setHandler('transaction.save', function( transaction ) {
-		if( !transaction.id ) {
-			transaction.id = ++id;
-			localStorage['transactions_id'] = id;
+		var d = $.Deferred();
+		
+		if( !transaction.isValid() ) {
+			d.reject( transaction );
+		} else {
+			$.when( CashTrack.db.ready )
+			 .then( function(db) {
+				var data = transaction.toJSON();
+				if( !data.id )
+					delete data.id;
+					
+				var request = db.transaction('transactions', 'readwrite')
+								.objectStore('transactions')
+								.put( data )
+					request.onsuccess = function( event ) {
+						transaction.set('id', event.target.result);
+						d.resolve( transaction );
+					}
+			 });
 		}
 		
-		transactions.push( transaction );
-		localStorage['transactions'] = JSON.stringify( transactions );
+		return d.promise();
 	});
-	CashTrack.reqres.setHandler('transaction.remove', function( transaction ) {
-	
+	CashTrack.reqres.setHandler('transaction.delete', function( transaction ) {
+		var d = $.Deferred();
+		
+		$.when( CashTrack.db.ready )
+		 .then( function( db ) {
+			var request = db.transaction('transactions', 'readwrite')
+							.objectStore('transactions')
+							.delete( transaction.get('id') );
+				request.onsuccess = function( event ) {
+					d.resolve();
+				}
+				request.onerror = function( event ) {
+					d.reject( event );
+				}
+		 });
+		return d.promise();
 		var index = transactions.indexOf( transaction );
 		if( ~index ) {
 			delete transactions[ index ];

@@ -33,7 +33,7 @@
 		className: 'app-section month',
 		template: '#history-month-template',
 		events: {
-			'click': 'toggle',
+			'click .header': 'toggle',
 		},
 		initialize: function( options ) {
 			this.template = _.template( $( this.template).html() );

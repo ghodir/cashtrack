@@ -108,7 +108,7 @@
 	var Application = root.Application = function(options) {
 		this.reqres = new RequestResponse();
 		this.commands = new Commands();
-		
+		this._templateCache = {};
 		this.initialize( arguments );
 	}
 	
@@ -132,8 +132,19 @@
 			}
 			
 			this.trigger('start');
-		}
+		},
 	});
+	
+	Application.render = (function( template, data ) {
+		var cache = {};
+		
+		return function( template, data ) { 
+			if( !cache[ template ] )
+				cache[ template ] = _.template( $( template ).html() );
+			return cache[ template ]( data );
+		}
+	})();
+	
 	
 	
 	//Taken from Backbone
