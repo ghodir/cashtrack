@@ -116,31 +116,6 @@ App.populator('distribution', function(page, args) {
                   layout.content.show( new CategoriesView({collection: categories}) );
             });
         });
-        layout.setMonth(0);
-        
-        return;
-        
-		
-		
-		var transactions = CashTrack.request('transactions');
-		transactions = _.sortBy( transactions, 'date');
-		var min = transactions[0].date.getFullYear(), max = transactions[ transactions.length - 1].date.getFullYear();
-		for( var i = min; i <= max; i++ ) {
-			$('<option>').attr('value', i).text( i ).appendTo( years );
-		}
-		
-		var container = $( page ).find('.categories');
-		_.each( categories, function( category ) {
-			var $item = $('<li>').addClass('category').appendTo( container );
-				$item.append( $('<span>').addClass('color').css({'background-color': category.color, 'border-color': darken( category.color, 50) }) );
-				$item.append( $('<span>').addClass('name').text( category.name ) );
-				$item.append( $('<span>').addClass('percentage').text( Globalize.format( category.amount / categories.sum, 'p')) );
-				$item.append( $('<span>').addClass('amount').text( Globalize.format( category.amount, 'c') ) );
-				
-				
-		});
-		
+        layout.setMonth(0);		
 	});
-}, function() {
-	this.paper && this.paper.remove();
 });
