@@ -14,36 +14,53 @@ App.populator('distribution', function(page, args) {
               height = this.$el.height();
               
           this.paper.setSize( width, height );
-          var items = this.collection.map( function( category ) {
-            return [category.get('amount'), category.get('name'), category.get('color')];
-          });
-        
-          this.paper.drawPieChart( width * 0.5, height * 0.5, Math.min( width, height ) * 0.5, items);
+          
+          if( this.collection.sum ) {
+            var items = [];
+            this.collection.each( function( category ) {
+              if( category.get('amount') )
+                  items.push([category.get('amount'), category.get('name'), category.get('color')]);
+            });
+              
+            this.paper.drawPieChart( width * 0.5, height * 0.5, Math.min( width, height ) * 0.5, items);
+          } else {
+              this.paper.text( width * 0.5, height * 0.5, 'Keine Daten')
+                        .attr({'font-family': 'Roboto', 'font-size': '42px', 'font-weight': '200'});
+          }
         }
     });
     
-    var DistributionView = Backbone.Marionette.CompositeView.extend({
-      el: $( page ).find('.app-section'),
-      initialize: function( options ) {        
-       
-      },
+    var CategoryView = Backbone.Marionette.ItemView.extend({
+        tagName: 'li',
+        className: 'category',
+        template: '#distribution-category-template',
+    });
+    
+    var CategoriesView = Backbone.Marionette.CollectionView.extend({
+      tagName: 'ul',
+      className: 'app-list categories',
+	  itemView: CategoryView,
+      initialize: function() {
+          this.collection.each( function( category){
+              category.set('percentage', category.get('amount') / this.collection.sum);
+          }, this);
+      }
     });
     
     var DistributionLayout = Backbone.Marionette.Layout.extend({
       el: page,
       regions: {
         chart: '.chart-region',
-        content: '.app-section',
+        content: '.categories-region',
       },
       events: {
         'change .years': 'onChange',
         'change .months': 'onChange',
       },
-      initialize: function() {
+      initialize: function( options ) {            
         var months = this.$el.find('.months');
-		for(var i = 0; i < 12; i++) {
-			$('<option>').attr('value', i).text( Globalize.culture().calendars.standard.months.names[i] ).appendTo( months );
-		}
+        for(var i = 0; i < 12; i++)
+			var option = $('<option>').attr('value', i).text( Globalize.culture().calendars.standard.months.names[i] ).appendTo( months );
         
         var self = this;
         $.when( CashTrack.request('transactions', {count: 1}) )
@@ -55,35 +72,52 @@ App.populator('distribution', function(page, args) {
              var min = transactions.models[0].get('date').getFullYear(),
                  max = (new Date()).getFullYear();
              while( max >= min++ )
-               $('<option>').attr('value', min - 1).text( min - 1 ).appendTo( years );
+               var option = $('<option>').attr('value', min - 1).text( min - 1 ).appendTo( years );
          });
          
-         $.when( CashTrack.request('categories', 0) )
-          .then( function( categories ) {
-            self.chart.show( new ChartView({collection: categories}) );   
-          });
+         var now = new Date(),
+             then = new Date( now.getFullYear(), now.getMonth() - (options.month || 0), 1);
+             
+         this.setMonth( then.getFullYear(), then.getMonth() );
       },
       onChange: function() {
         var year = this.$el.find('.years').val();
         var month = this.$el.find('.months').val();
         
-        var now = new Date(),
-            then = new Date( year, month, 1);
-            
-        this.showMonth( now.getMonth() - parseInt(month) + 12 * ( now.getFullYear() - parseInt(year) ) );
+        this.setMonth( parseInt(year), parseInt(month) );
       },
-      showMonth: function( month ) {
-        
+      setMonth: function( year, month ) {
+          var now = new Date();
+          if( month === undefined ) {
+              var then = new Date( now.getFullYear(), now.getMonth() - year, 1);
+              year = then.getFullYear();
+              month = then.getMonth();
+          }
+          
+          var $options = this.$el.find('.months option');
+              $options.removeAttr('selected');
+              $options.eq( month ).attr('selected', 'true');
+              
+              $options = this.$el.find('.years option');
+              $options.removeAttr('selected');
+              $options.filter('[value="' + year + '"]').attr('selected', 'true');
+              
+          this.trigger('month:change', now.getMonth() - month + 12 * ( now.getFullYear() - year ) );
       }
     });
     
 	$(page).on('appShow', function() {
-        CashTrack.request('categories', 0).then( function( categories ) {
-          var layout = new DistributionLayout();
-              layout.chart.show( new ChartView({collection: categories}) );
-              layout.content.attachView( new DistributionView({collection: categories}) );
-		  
+        
+        // Change this 'cause it's ugly
+        var layout = new DistributionLayout({month: 0});
+        layout.on('month:change', function( month ) {
+            CashTrack.request('categories', month).then( function( categories ) {
+                  layout.chart.show( new ChartView({collection: categories}) );
+                  layout.content.show( new CategoriesView({collection: categories}) );
+            });
         });
+        layout.setMonth(0);
+        
         return;
         
 		

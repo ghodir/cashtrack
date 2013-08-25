@@ -190,14 +190,18 @@
 				</div>
 				<div class="app-section ">
 					<div class="datepicker">
-						<select class="months"></select>
-						<select class="years"></select>
+						<span class="inline-input popup"><select class="months"></select></span>
+						<span class="inline-input popup"><select class="years"></select></span>
 					</div>
-					<ul class="app-list categories">
-					
-					</ul>
+                    <div class="categories-region"></div>
 				</div>
 			</div>
+            <script type="text/template" id="distribution-category-template">
+            	<span class="color" style="background-color: {{ color }}; border-color: {{ darken( color, 50) }}"></span>
+				<span class="name">{{= name }}</span>
+				<span class="percentage"> {{ format( percentage, 'p') }}</span>
+				<span class="amount">{{ format( amount, 'c') }}</span>
+            </script>
 		</div>
 		
 		

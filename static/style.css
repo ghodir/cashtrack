@@ -11,7 +11,14 @@
 	position: relative;
 }
 
-.input.popup:after {
+.inline-input {
+  display: inline-block;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  margin: 0 3px;
+}
+
+.popup:after {
 	position: absolute;
 	display: inline-block;
 	height: 0;
@@ -25,7 +32,12 @@
 	z-index: 0;
 }
 
-.input.popup:hover:after {
+.input.popup,
+.inline-input.popup {
+  padding-right: 12px;
+}
+
+.popup:hover:after {
 	opacity: .8;
 }
 
@@ -340,12 +352,18 @@
 
 #distribution .chart {
 	margin: 1em auto;
-    width: 200px;
     height: 200px;
 }
 
 #distribution .datepicker {
 	float: right;
+    margin: 6px 18px;
+}
+
+#distribution .datepicker select {
+  background: none;
+  border: none;
+  -webkit-appearance: none;
 }
 
 #distribution .categories {

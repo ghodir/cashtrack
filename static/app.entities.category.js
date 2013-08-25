@@ -59,8 +59,8 @@
 				});
 			});
 		},
-        comperator: function( model ) {
-          return model.get('amount');
+        comparator: function( model ) {
+            return -model.get('amount');
         }
 	});
 			
@@ -79,7 +79,7 @@
 				var cursor = e.target.result;
 				if( cursor ) {
 					var category = new Category( cursor.value );
-					documents.push( category );
+					documents.add( category );
 					
 					if( _.isNumber( month ) ) {
 						var d = $.Deferred();

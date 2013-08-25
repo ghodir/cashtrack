@@ -80,3 +80,11 @@ _.templateSettings = {
     interpolate: /\{\{(.+?)\}\}/g,
     escape:      /\{\{=(.+?)\}\}/g
 };
+
+(function() {
+  var tmp = Backbone.Marionette.View.prototype.mixinTemplateHelpers
+  Backbone.Marionette.View.prototype.mixinTemplateHelpers = function( target ) {
+    target.format = function() { return Globalize.format.apply(Globalize, arguments); }
+    return tmp.call(this,target );
+  }
+})();
