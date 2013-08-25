@@ -65,18 +65,30 @@
 	});
 	
 	// Query by months in the past, destination, time range
-	CashTrack.reqres.setHandler('transactions', function( category, month ) {
+	CashTrack.reqres.setHandler('transactions', function( category, month, options ) {
 		var d = $.Deferred(), start, end;
 		
+        if( _.isObject( category ) ) {
+          options = category;
+          category = undefined;
+		}
+        
 		category || ( category = '');
 		
 		if( _.isNumber( month ) ) {
 			now = new Date(), y = now.getFullYear(), m = now.getMonth() - month;
 			start = new Date(y, m, 1);
 			end = new Date(y, m + 1, 1);
+		} else if( _.isObject( month ) && !options ) {
+          options = month;
+          month = undefined;
 		} else {
 			start = end = '';
 		}
+        
+        options = _.extend({
+          count: -1,
+        }, options);
 			
 		$.when( CashTrack.db.ready )
 		 .then( function( db ) {
@@ -104,9 +116,10 @@
 			var documents = new Transactions();
 			index.openCursor( range, 'prev' ).onsuccess = function( event ) {
 					var cursor = event.target.result;
-					if( cursor ) {
+					if( cursor && options.count-- ) {
 						var transaction = new Transaction( cursor.value );
 						documents.push( transaction );
+                        
 						cursor.continue();
 					} else {
 						d.resolve( documents );

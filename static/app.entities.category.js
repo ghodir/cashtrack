@@ -58,7 +58,10 @@
 					this.sum += model.get('amount');
 				});
 			});
-		}
+		},
+        comperator: function( model ) {
+          return model.get('amount');
+        }
 	});
 			
 	CashTrack.reqres.setHandler('categories', function(month) {

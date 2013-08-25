@@ -43,8 +43,8 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 		var r1 = radius - 22,
 			r2 = radius - 10,
 			r3 = radius - 5,
-			val = items[ i ].value,
-			color1 = items[ i ].color,
+			val = items[ i ][0],
+			color1 = items[ i ][2],
 			color2 = colorLuminance(color1, -.5),
 			delta = val / total * 360.0,
 			coords1 = sector(cx, cy, r1, angle + 2, angle + delta - 2),
@@ -71,11 +71,13 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 			chart.push( marker );
 			
 			path.click(function() {
-				_.each( markers, function(m) { m.hide() } );
+				_.each( markers, function(m) { 
+                  m.hide() 
+                });
 				marker.show();
-				value.attr('text', Math.round( items[i].value * 100 * 100 / total ) / 100 + '%');
-				label.attr('text', items[i].label);
-				var text = items[i].label, l = text.length - 3;
+				value.attr('text', Math.round( val * 100 * 100 / total ) / 100 + '%');
+				label.attr('text', items[i][1]);
+				var text = items[i][1], l = text.length - 3;
 				while( label.getBBox().width > r1 * 2 - 20 && l > 0 ) {
 					label.attr('text', text.substring(0, l--) + '...');
 				}
@@ -89,10 +91,10 @@ Raphael.fn.drawPieChart = function(cx, cy, radius, items) {
 	}
 
 	for( var i = items.length; i; i-- ) {
-		total += items[i - 1].value;
+		total += items[i - 1][0];
 	}
 	
-	items = _.sortBy( items, 'value' );
+	items = items.sort(function(a, b) { return a[0] - b[0]; });
 	
 	for( var i = 0; i < items.length; i++ ) {
 		drawSegment( i );
