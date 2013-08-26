@@ -108,7 +108,7 @@ App.populator('history', function(page, args) {
       },
       initialize: function( options ) {
         
-        var select = this.$el.find('.category .value');
+        var select = this.$el.find('.category .value').empty();
             select.append( $('<option>').attr('value', '').text( 'Alle' ) )
         options.categories.forEach( function( category ) {
 			$('<option>').attr('value', category.get('id')).text( category.get('name') ).appendTo( select );

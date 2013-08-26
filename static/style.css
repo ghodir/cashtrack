@@ -19,8 +19,8 @@
 .input,
 .inline-input {
   margin: 0 3px;
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  padding: 0 3px;
+  border-bottom: 1px solid #ccc;
 }
 
 .popup:after {
@@ -29,7 +29,7 @@
 	height: 0;
 	content: " ";
 	width: 0;
-	bottom: 0;
+	bottom: -1px;
 	right: 0;
 	border-bottom: 10px solid #0059bc;
 	border-left: 10px solid transparent;
