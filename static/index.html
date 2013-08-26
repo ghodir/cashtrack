@@ -133,22 +133,19 @@
 				<div class="app-button right transaction" data-target="transaction">+</div>
 			</div>
 			<div class="app-content">
-				<select class="category">
-					<option value="">Alle</option>
-				</select>
-				<ul class="history">
-					
-				</ul>
+				<div class="input popup category"><select class="value"></select></div>
+                <div class="history-region"></div>
 			</div>
 			<script type="text/template" id="history-month-template">
 				<div class="header">
 					<span class="expand">&rsaquo;</span>
 					<span class="name">
 						{% var now = new Date(); %}
-						{% if( now.getFullYear() == transactions[0].date.getFullYear() ) { %}
-							{{ format( now, 'MMMM' ) }}
+                        {% var then = new Date( now.getFullYear(), now.getMonth() - month, 1); %}
+						{% if( now.getFullYear() == then.getFullYear() ) { %}
+							{{ format( then, 'MMMM' ) }}
 						{% } else { %}
-							{{ format( now, 'MMMM, yyyy' ) }}
+							{{ format( then, 'MMMM, yyyy' ) }}
 						{% } %}
 					</span>
 					<span class="amount">

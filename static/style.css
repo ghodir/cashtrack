@@ -14,8 +14,13 @@
 .inline-input {
   display: inline-block;
   position: relative;
-  border-bottom: 1px solid #eee;
+}
+
+.input,
+.inline-input {
   margin: 0 3px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
 }
 
 .popup:after {
@@ -32,13 +37,16 @@
 	z-index: 0;
 }
 
-.input.popup,
-.inline-input.popup {
-  padding-right: 12px;
-}
-
 .popup:hover:after {
 	opacity: .8;
+}
+
+.input select,
+.inline-input select {
+  background: none;
+  border: none;
+  -webkit-appearance: none;
+  outline: none;
 }
 
 #home .app-list li {
@@ -238,13 +246,13 @@
 	width: 33%;
 }
 
-#history select.category {
+#history .category {
 	float: right;
 	margin: 1em 8px;
 }
 
-#history .history {
-	clear: both;
+#history .history-region {
+  clear: both;
 }
 
 #history .month .header {
@@ -358,12 +366,6 @@
 #distribution .datepicker {
 	float: right;
     margin: 6px 18px;
-}
-
-#distribution .datepicker select {
-  background: none;
-  border: none;
-  -webkit-appearance: none;
 }
 
 #distribution .categories {

@@ -73,7 +73,8 @@
           category = undefined;
 		}
         
-		category || ( category = '');
+		category && ( category = parseInt( category) )
+        category || ( category = '');
 		
 		if( _.isNumber( month ) ) {
 			now = new Date(), y = now.getFullYear(), m = now.getMonth() - month;
