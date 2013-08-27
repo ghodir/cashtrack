@@ -138,7 +138,6 @@ App.populator('history', function(page, args) {
     });
 	
 	$( page ).on('appShow', function() {
-		
 		CashTrack.request('categories').then(function(categories) {
           var layout = new Layout({ categories: categories });
               layout.showCategory(null);

@@ -38,26 +38,33 @@
 		});
 	});
 	
-	
-	var Category = Backbone.Model.extend({
-		initialize: function() {
-			this.set('amount', 0.0);
+	CashTrack.entities || ( CashTrack.entities = {} );
+	var Category = CashTrack.entities.Category = Backbone.Model.extend({
+		defaults: {
+          amount: 0.0,
+          name: '',
+          budget: false,
+          color: ''
+        },
+        initialize: function() {
 			this.on('change:transactions', function(model, transactions) {
 				this.set('amount', transactions.sum);
 			});
 		}
 	});
 	
-	var Categories = Backbone.Collection.extend({
+	var Categories = CashTrack.entities.Categories = Backbone.Collection.extend({
 		initialize: function() {
 			this.sum = 0.0;
-			this.on('add', function( model ) {
+			this.listenTo(this, 'add', function( model ) {
 				this.sum += model.get('amount');
-				this.listenTo(model, 'change:amount', function(model) {
-					this.sum -= model.previous('amount');
-					this.sum += model.get('amount');
-				});
 			});
+            
+            this.listenTo(this, 'change:amount', function(model) {
+              this.sum -= model.previous('amount');
+              this.sum += model.get('amount');
+              this.sort();
+            });
 		},
         comparator: function( model ) {
             return -model.get('amount');

@@ -5,7 +5,11 @@ CashTrack = new Application();
 CashTrack.db = {};
 CashTrack.db.ready = deferred.promise();
 
-CashTrack.on('start:before', function() {	
+CashTrack.on('start:before', function() {
+  CashTrack.settings = new Backbone.Model({
+    'monthly-budget': 100
+  });
+  
 	var request = window.indexedDB.open('cashtrack', 1);
 		request.onerror = function( event ) {
 			console.log( event.target.errorCode );

@@ -120,10 +120,10 @@
 	background: #ccc;
 	border: 1px solid #fff;
 	
-	transition: all .4s ease-out .5s;
-	-o-transition: width .4s ease-out .5s;
-	-moz-transition: width .4s ease-out .5s;
-	-webkit-transition: width .4s ease-out .5s;
+	transition: width .4s ease-out;
+	-o-transition: width .4s ease-out;
+	-moz-transition: width .4s ease-out;
+	-webkit-transition: width .4s ease-out;
 }
 
 #transaction .amount {
@@ -400,4 +400,108 @@
 	margin-left: .7em;
 	font-weight: bold;
 	text-align: right;
+}
+
+#budget .month-region {
+  height: 5em;
+}
+
+#budget .month-region .labels {
+  position: relative;
+  height: 2em;
+  padding-top: 32px;
+  font-size: .6em;
+  line-height: 1em;
+  margin: 0 8px;
+}
+
+#budget .month-region .labels .first {
+  position: absolute;
+  left: 0;
+  bottom: 1.5em;
+}
+
+#budget .month-region .labels .today {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 64px;
+  margin-left: -32px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+#budget .month-region .labels .last {
+  position: absolute;
+  right: 0;
+  bottom: 1.5em;
+  
+}
+
+#budget .background {
+  position: absolute;
+  top: 0;
+  right: 8px;
+  left: 0;
+  bottom: 0;
+  border-left: 8px solid rgba(0, 0, 0, 0.05);
+}
+
+#budget .background .progress {
+  width: 20%;
+  background: rgba(0, 0, 0, .05);
+  height: 100%;
+  border-right: 1px solid rgba(0, 0, 0, .2);
+}
+
+#budget .categories-region {
+  margin: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+#budget .category {
+  margin: 16px 0;
+}
+
+#budget .category .bar {
+  background: #ccc;
+}
+
+#budget .category .bar .value {
+  display: block;
+  height: 16px;
+  width: 0;
+  max-width: 100%;
+  
+  transition: width .4s ease-out .1s;
+  -webkit-transition: width .4s ease-out .1s;
+  border: 1px solid #fff;
+  position: relative;
+}
+
+#budget .category .label {
+  padding: 0 8px;
+}
+
+#budget .category .label .amount,
+  #budget .category .label .difference {
+  font-size: .8em;
+}
+
+#budget .category .label .difference {
+  float: right;
+  color: #f1c40f;
+}
+
+#budget .category .label .difference.positive {
+  color: #2ecc71;
+}
+
+#budget .category .label .difference.warning {
+  color: #f39c12;
+}
+
+#budget .category .label .difference.negative {
+  color: #c0392b;
 }
