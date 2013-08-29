@@ -10,8 +10,17 @@ App.populator('budget', function(page, args) {
       
       this.$el.find('.first').html( '&lsaquo; ' + Globalize.format( first, 'M'));
       this.$el.find('.last').html( Globalize.format( last, 'M') + ' &rsaquo;');
-      this.$el.find('.today').text('Heute').css('left', percentage * 100 + '%');
-      this.$el.find('.progress').width( percentage * 100 + '%');
+     
+      
+      var start = new Date(now);
+          start.setHours(0, 0, 0, 0);
+          end = new Date(now);
+          end.setHours(23, 59, 59, 0);
+          
+      this.$el.find('.progress').css('left',  (start - first)/(last-first) * 100 + '%');
+      this.$el.find('.progress').css('right',  (1 - (end - first)/(last-first)) * 100 + '%');
+      this.$el.find('.today').text('Heute').css('left', ((start - first)/(last-first) + (end - first)/(last-first) ) / 2 * 100 + '%');
+     
       
       return this;      
     }
@@ -25,7 +34,7 @@ App.populator('budget', function(page, args) {
       'click': 'onClick',
     },
     initialize: function( options ) {
-      this.model.set('budget', 50.0);
+      this.model.set('budget', 1000.0);
     },
     onDomRefresh: function() {
       var bar = this.$el.find('.bar .value');
