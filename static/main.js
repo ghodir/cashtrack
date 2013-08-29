@@ -92,3 +92,21 @@ _.templateSettings = {
     return tmp.call(this,target );
   }
 })();
+
+/*
+CashTrack.views = {};
+CashTrack.views.Input = Backbone.ItemView.extend({
+   tagName: 'div',
+   className: 'input',
+   initialize: function( options ) {
+     this.field = options.field;
+     this.listenTo( this.model, 'change:' + field, this.onChange );
+   },
+   render: function() {
+     this.$el.append();
+   },
+   onChange: function() {
+     this.test;
+   }
+});
+*/

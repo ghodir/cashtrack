@@ -505,3 +505,70 @@
 #budget .category .label .difference.negative {
   color: #c0392b;
 }
+
+#category .app-content {
+  padding: 0 8px;
+}
+
+.android .control.text {
+  border-bottom: 1px solid #ccc;
+  display: block;
+  position: relative;
+  margin-top: 8px;
+}
+
+.android .control.text:after,
+.android .control.text:before {
+  position: absolute;
+  height: 4px;
+  content: ' ';
+  display: block;
+  bottom: 0;
+}
+
+.android .control.text:before {
+  left: 0;
+  border-left: 1px solid #ccc;
+}
+
+.android .control.text:before {
+  right: 0;
+  border-right: 1px solid #ccc;
+}
+
+.android .control.text.focus,
+.android .control.text.focus:after,
+.android .control.text.focus:before {
+  border-color: #1c7de6;
+}
+
+.android .control.text .value {
+  width: 100%;
+  background: none;
+  border: none;
+  line-height: 20px;
+  height: 30px;
+  outline: none;
+  
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0 4px;
+}
+
+.android .control.button {
+  background: #ccc;
+  border: 0 none;
+  border-bottom: 1px solid #666;
+  height: 30px;
+  line-height: 20px;
+  
+  margin-top: 8px;
+  
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  
+  padding: 0 2em;
+  outline: none;
+}

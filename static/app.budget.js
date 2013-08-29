@@ -21,6 +21,9 @@ App.populator('budget', function(page, args) {
     tagName: 'li',
     className: 'category',
     template: '#budget-category-template',
+    events: {
+      'click': 'onClick',
+    },
     initialize: function( options ) {
       this.model.set('budget', 50.0);
     },
@@ -44,6 +47,9 @@ App.populator('budget', function(page, args) {
       } else  {
         diff.text('You did it :)');
       }
+    },
+    onClick: function() {
+      App.load('category', {id: this.model.get('id')} );
     }
   });
   

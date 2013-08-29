@@ -17,7 +17,7 @@
 			
 		</style>
 	</head>
-	<body>
+	<body class="android">
 		<script type="application/javascript" src="/static/lib/underscore.js"></script>
 		<script type="application/javascript" src="/static/lib/globalize.js"></script>
 		<script type="application/javascript" src="/static/lib/globalize.culture.de.js"></script>
@@ -40,7 +40,7 @@
 		<script type="application/javascript" src="/static/app.budget.js"></script>
 		<script type="application/javascript" src="/static/app.distribution.js"></script>
 		<script type="application/javascript" src="/static/app.settings.js"></script>
-
+		<script type="application/javascript" src="/static/app.category.js"></script>
 
 		<div id="home" class="app-page" data-page="home">
 			<div class="app-topbar">
@@ -221,7 +221,7 @@
 		
 		<div id="settings" class="app-page" data-page="settings">
 			<div class="app-topbar">
-				<div class="app-button" data-back="true">Menü</div>
+				<div class="app-button" data-back="true">Settings</div>
 				<div class="app-title">Einstellungen</div>
 				<div class="app-button right transaction" data-target="transaction">+</div>
 			</div>
@@ -229,6 +229,16 @@
 				
 			</div>
 		</div>
+        
+        <div id="category" class="app-page" data-page="category">
+          <div class="app-topbar">
+            <div class="app-button" data-back="true">Menü</div>
+            <div class="app-title">Category</div>
+            <div class="app-button right transaction" data-target="transaction">+</div>
+          </div>
+          <div class="app-content">
+          </div>
+        </div>
 		
 		<script type="application/javascript">
 			Globalize.culture('de');

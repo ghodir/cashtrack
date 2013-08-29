@@ -110,43 +110,20 @@
 		 });
 		 
 		return deferred.promise();
-		var r = _.isEmpty(query) ? categories : sift(query, categories);
-		
-		if( !_.isObject( query ) ) {
-			end = start;
-			start = query;
-		};
-		
-		if( start !== undefined ) {
-			if( _.isNumber( start ) ) {
-				var now = new Date(), y = now.getFullYear(), m = now.getMonth() - start;
-					start = new Date(y, m, 1);
-					end   = new Date(y, m + 1, 1);
-			}
-			
-			r.sum = 0.00;
-			_.each( r, function( category ) {
-				category.transactions = CashTrack.request('transactions', { 
-					destination: category.id,
-					date: { $gte: start, $lt: end } 
-				});
-				
-				category.amount = 0.00;
-				_.each(category.transactions, function( t ) {
-					category.amount += t.amount;
-				});
-				
-				r.sum += category.amount;
-			});
-		}
-		
-		return r;
 	});
 	
 	CashTrack.reqres.setHandler('category', function(id) {
-		return _.find( categories, function( category ) {
-			return category.id == id;
-		});
+		var d = $.Deferred();
+        $.when( CashTrack.db.ready )
+         .then( function( db) {
+           db.transaction('categories', 'readonly')
+             .objectStore('categories')
+             .get( id )
+             .onsuccess = function() {
+               d.resolve( new Category( this.result ) );
+             }
+         });
+        return d.promise();
 	});
 	
 	CashTrack.reqres.setHandler('category.create', function( data ) {
